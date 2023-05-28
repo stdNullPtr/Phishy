@@ -1,5 +1,4 @@
 ﻿using System.Runtime.InteropServices;
-using static System.Windows.Forms.AxHost;
 
 namespace wow_fishbot_sharp.Utils;
 
@@ -108,9 +107,7 @@ internal class MouseUtils
     }
     public static void MoveMouseFibonacci(CancellationToken cancellationToken, string windowName, ref bool isBobberAlreadyFound)
     {
-        Point startingPoint = WindowUtils.GetWindowCenterPoint(windowName)!.Value;
-
-        MoveToCenterOfWindow(windowName, true);
+        GetCursorPos(out var startingPoint);
 
         // Radius and angular speed for the spiral
         double radius = 1.0;

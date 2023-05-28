@@ -20,7 +20,7 @@ internal class AudioUtils
     {
         MMDeviceEnumerator enumerator = new MMDeviceEnumerator();
         MMDevice device = enumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
-        device.AudioEndpointVolume.MasterVolumeLevel = 0.0f;
+        device.AudioEndpointVolume.MasterVolumeLevelScalar = 1.0f;
     }
 
     public static void MuteSound()
