@@ -21,9 +21,15 @@ namespace wow_fishbot_sharp.Hooks
         private static extern IntPtr GetModuleHandle(string lpModuleName);
 
         private delegate IntPtr LowLevelMouseProc(int nCode, IntPtr wParam, IntPtr lParam);
+        private readonly LowLevelMouseProc _hookProcDelegate;
         private static IntPtr _hookId = IntPtr.Zero;
 
         public event EventHandler<string>? OnCursorMove;
+
+        public MouseHook()
+        {
+            _hookProcDelegate = HookCallback;
+        }
 
         private IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
         {
@@ -47,7 +53,7 @@ namespace wow_fishbot_sharp.Hooks
 
         public void HookMouse()
         {
-            _hookId = SetHook();
+            _hookId = SetHook(_hookProcDelegate);
         }
 
         public void UnHookMouse()
@@ -55,12 +61,12 @@ namespace wow_fishbot_sharp.Hooks
             UnhookWindowsHookEx(_hookId);
         }
 
-        private IntPtr SetHook()
+        private IntPtr SetHook(LowLevelMouseProc hookProcDelegate)
         {
             using var curProcess = System.Diagnostics.Process.GetCurrentProcess();
             using var curModule = curProcess.MainModule;
             if (curModule != null)
-                return SetWindowsHookEx(WH_MOUSE_LL, HookCallback, GetModuleHandle(curModule.ModuleName), 0);
+                return SetWindowsHookEx(WH_MOUSE_LL, hookProcDelegate, GetModuleHandle(curModule.ModuleName), 0);
             return IntPtr.Zero;
         }
     }
