@@ -84,7 +84,7 @@ public class FishingStateMachine
 
             case FishingState.WaitAndCatch:
                 Console.WriteLine("[FishingStateMachine]: Waiting for a fish to bite...");
-                ListenForFish(cancellationToken, TimeSpan.FromSeconds(10));
+                ListenForFish(cancellationToken, TimeSpan.FromSeconds(20));
                 Console.WriteLine("[FishingStateMachine]: Stopped listening for fish.");
 
                 if (_isBobberDipped)
