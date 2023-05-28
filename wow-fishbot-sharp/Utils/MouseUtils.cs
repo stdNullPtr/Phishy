@@ -92,7 +92,7 @@ internal class MouseUtils
         return (int)Math.Round(start + (target - start) * t);
     }
 
-    public static void MoveToCenterOfWindow(string windowName, bool smoothly)
+    public static void MoveToCenterOfWindow(string windowName, bool smoothly, int heightCorrectionPixels)
     {
         string foregroundWindowName = WindowUtils.GetForegroundWindowName();
         if (foregroundWindowName != windowName)
@@ -102,6 +102,7 @@ internal class MouseUtils
         }
 
         Point centerPoint = WindowUtils.GetWindowCenterPoint(windowName)!.Value;
+        centerPoint.Y -= heightCorrectionPixels;
 
         MoveCursor(centerPoint, smoothly);
     }

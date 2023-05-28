@@ -5,6 +5,7 @@ namespace wow_fishbot_sharp;
 public enum FishingState
 {
     Start,
+    ApplyLure,
     CastLine,
     FindBobber,
     WaitAndCatch,
@@ -19,9 +20,12 @@ public class FishingStateMachine
     // todo thread unsafe
     private bool _isBobberFound;
 
+    private DateTime _lastLureApplyTime;
+
     public FishingStateMachine()
     {
         _currentState = FishingState.Start;
+        _lastLureApplyTime = DateTime.Now.AddDays(-69);
     }
 
     public void Update(CancellationToken cancellationToken)
@@ -39,17 +43,28 @@ public class FishingStateMachine
                 _isBobberDipped = _isBobberFound = _isLineCast = false;
 
                 Console.WriteLine("[FishingStateMachine]: Moving to center of screen...");
-                MouseUtils.MoveToCenterOfWindow("World of Warcraft", true);
+                MouseUtils.MoveToCenterOfWindow("World of Warcraft", true, 100);
 
-                _currentState = FishingState.CastLine;
+                TransitionTo(DateTime.Now - _lastLureApplyTime > TimeSpan.FromMinutes(10)
+                    ? FishingState.ApplyLure
+                    : FishingState.CastLine);
+
                 break;
+            case FishingState.ApplyLure:
+                Console.WriteLine("[FishingStateMachine]: Applying lure (should be on '2' button)...");
 
+                ApplyLure();
+                _lastLureApplyTime = DateTime.Now;
+
+                TransitionTo(FishingState.CastLine);
+                break;
             case FishingState.CastLine:
                 Console.WriteLine("[FishingStateMachine]: Casting the fishing line...");
 
                 CastLine();
                 _isLineCast = true;
-                _currentState = FishingState.FindBobber;
+
+                TransitionTo(FishingState.FindBobber);
                 break;
 
             case FishingState.FindBobber:
@@ -59,11 +74,11 @@ public class FishingStateMachine
 
                 if (_isBobberFound && _isLineCast)
                 {
-                    _currentState = FishingState.WaitAndCatch;
+                    TransitionTo(FishingState.WaitAndCatch);
                 }
                 else
                 {
-                    _currentState = FishingState.Start;
+                    TransitionTo(FishingState.Start);
                 }
                 break;
 
@@ -78,11 +93,11 @@ public class FishingStateMachine
                     _isBobberDipped = false;
                     Console.WriteLine("[FishingStateMachine]: Resetting IsBobberFound.");
                     _isBobberFound = false;
-                    _currentState = FishingState.CatchFish;
+                    TransitionTo(FishingState.CatchFish);
                 }
                 else
                 {
-                    _currentState = FishingState.Start;
+                    TransitionTo(FishingState.Start);
                 }
 
                 break;
@@ -94,10 +109,21 @@ public class FishingStateMachine
                 _isLineCast = false;
                 Thread.Sleep(1000);
 
-                _currentState = FishingState.Start;
+                TransitionTo(FishingState.Start);
                 break;
         }
     }
+
+    private void TransitionTo(FishingState state)
+    {
+        _currentState = state;
+    }
+
+    private void ApplyLure()
+    {
+        KeyboardUtils.SendKeyInput(Keys.D2);
+    }
+
     private void CastLine()
     {
         KeyboardUtils.SendKeyInput(Keys.D1);
@@ -116,7 +142,7 @@ public class FishingStateMachine
         {
             if (_isBobberFound && AudioUtils.GetMasterVolumeLevel() > 0.1f)
             {
-                Console.WriteLine("[FishingStateMachine]: Probably a fish!");
+                Console.WriteLine($"[FishingStateMachine]: Probably a fish! (sound level: {AudioUtils.GetMasterVolumeLevel()})");
                 _isBobberDipped = true;
                 break;
             }
