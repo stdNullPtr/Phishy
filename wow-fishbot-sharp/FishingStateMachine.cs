@@ -122,6 +122,7 @@ public class FishingStateMachine
     private void ApplyLure()
     {
         KeyboardUtils.SendKeyInput(Keys.D2);
+        Thread.Sleep(3000);
     }
 
     private void CastLine()
