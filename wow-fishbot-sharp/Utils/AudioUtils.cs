@@ -15,4 +15,18 @@ internal class AudioUtils
 
         return volumeLevel;
     }
+
+    public static void SetVolumeToMax()
+    {
+        MMDeviceEnumerator enumerator = new MMDeviceEnumerator();
+        MMDevice device = enumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
+        device.AudioEndpointVolume.MasterVolumeLevel = 0.0f;
+    }
+
+    public static void MuteSound()
+    {
+        MMDeviceEnumerator enumerator = new MMDeviceEnumerator();
+        MMDevice device = enumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
+        device.AudioEndpointVolume.Mute = true;
+    }
 }

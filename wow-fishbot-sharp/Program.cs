@@ -14,6 +14,9 @@ namespace wow_fishbot_sharp
         {
             Console.WriteLine("[Main]: Started, pres DEL to stop");
 
+            AudioUtils.SetVolumeToMax();
+            AudioUtils.MuteSound();
+
             CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
 
             Task initMessageLoopAndHooks = Task.Run(() => { InitHooksAndMessageLoop(cancellationTokenSource.Token); });
