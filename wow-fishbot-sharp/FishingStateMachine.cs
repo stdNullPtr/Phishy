@@ -49,8 +49,6 @@ public class FishingStateMachine
 
                 CastLine();
                 _isLineCast = true;
-                Thread.Sleep(1000);
-
                 _currentState = FishingState.FindBobber;
                 break;
 
@@ -110,12 +108,13 @@ public class FishingStateMachine
         MouseUtils.MoveMouseFibonacci(cancellationToken, "World of Warcraft", ref _isBobberFound);
     }
 
+    // go max volume on both win and wow, and mute
     private void ListenForFish(CancellationToken cancellationToken, TimeSpan timeoutInSeconds)
     {
         DateTime lastLineCastTime = DateTime.Now;
         while (!cancellationToken.IsCancellationRequested)
         {
-            if (_isBobberFound && AudioUtils.GetMasterVolumeLevel() > 0.02f)
+            if (_isBobberFound && AudioUtils.GetMasterVolumeLevel() > 0.1f)
             {
                 Console.WriteLine("[FishingStateMachine]: Probably a fish!");
                 _isBobberDipped = true;
