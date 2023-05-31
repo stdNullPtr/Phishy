@@ -1,4 +1,4 @@
-﻿namespace wow_fishbot_sharp.Utils;
+﻿namespace Phishy.Utils;
 
 internal class KeyboardUtils
 {

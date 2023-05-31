@@ -1,7 +1,7 @@
 ﻿using NAudio.CoreAudioApi;
 
 
-namespace wow_fishbot_sharp.Utils;
+namespace Phishy.Utils;
 
 internal class AudioUtils
 {

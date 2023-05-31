@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace wow_fishbot_sharp.Utils;
+namespace Phishy.Utils;
 
 internal class MouseUtils
 {
@@ -125,9 +125,9 @@ internal class MouseUtils
             {
                 break;
             }
-            
+
             angle += angularSpeed;
-            radius += radiusMod; 
+            radius += radiusMod;
 
             // Calculate the new mouse position
             startingPoint.X += (int)(radius * Math.Cos(angle));

@@ -1,7 +1,7 @@
 ﻿using System.Runtime.InteropServices;
 using System.Text;
 
-namespace wow_fishbot_sharp.Utils;
+namespace Phishy.Utils;
 
 internal class WindowUtils
 {
@@ -39,7 +39,7 @@ internal class WindowUtils
             centerPoint.Y = (clientRect.Top + clientRect.Bottom) / 2;
 
             ClientToScreen(windowHandle, ref centerPoint);
-            
+
             return centerPoint;
         }
 

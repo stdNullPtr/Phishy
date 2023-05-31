@@ -1,7 +1,7 @@
-﻿using wow_fishbot_sharp.Hooks;
-using wow_fishbot_sharp.Utils;
+﻿using Phishy.Hooks;
+using Phishy.Utils;
 
-namespace wow_fishbot_sharp
+namespace Phishy
 {
     class Program
     {
@@ -14,6 +14,7 @@ namespace wow_fishbot_sharp
         {
             Console.WriteLine("[Main]: Started, pres DEL to stop");
 
+            Console.WriteLine("[Main]: Setting win volume to max and mute");
             AudioUtils.SetVolumeToMax();
             AudioUtils.MuteSound();
 

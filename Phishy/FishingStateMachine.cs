@@ -1,6 +1,6 @@
-﻿using wow_fishbot_sharp.Utils;
+﻿using Phishy.Utils;
 
-namespace wow_fishbot_sharp;
+namespace Phishy;
 
 public enum FishingState
 {

@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace wow_fishbot_sharp.Hooks
+namespace Phishy.Hooks
 {
     internal sealed class WinEventHook
     {
