@@ -12,7 +12,6 @@ namespace Phishy.Configs
 {
     public sealed class Properties
     {
-        [YamlMember()]
         public string KeyboardKeyStartFishing { get; set; }
         public string KeyboardKeyApplyLure { get; set; }
         public int LureBuffDurationMinutes { get; set; }
