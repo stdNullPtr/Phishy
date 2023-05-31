@@ -1,4 +1,5 @@
-﻿using Phishy.Utils;
+﻿using Phishy.Configs;
+using Phishy.Utils;
 
 namespace Phishy;
 
@@ -33,25 +34,28 @@ public class FishingStateMachine
         switch (_currentState)
         {
             case FishingState.Start:
-                if (WindowUtils.GetForegroundWindowName() != "World of Warcraft")
+                //TODO add this logic to a TryTransition method and every state should check this
+                if (WindowUtils.GetForegroundWindowName() != AppConfig.Props.GameWindowName)
                 {
-                    Console.WriteLine("[FishingStateMachine]: waiting for wow window...");
+                    Console.WriteLine($"[FishingStateMachine]: Open game window [{AppConfig.Props.GameWindowName}]...");
+                    Console.SetCursorPosition(Console.GetCursorPosition().Left, Console.GetCursorPosition().Top - 1);
                     Thread.Sleep(1000);
                     break;
                 }
+                Console.WriteLine();
 
                 _isBobberDipped = _isBobberFound = _isLineCast = false;
 
                 Console.WriteLine("[FishingStateMachine]: Moving to center of screen...");
-                MouseUtils.MoveToCenterOfWindow("World of Warcraft", true, 100);
+                MouseUtils.MoveToCenterOfWindow(AppConfig.Props.GameWindowName, true, 100);
 
-                TransitionTo(DateTime.Now - _lastLureApplyTime > TimeSpan.FromMinutes(10)
+                TransitionTo(DateTime.Now - _lastLureApplyTime > TimeSpan.FromMinutes(AppConfig.Props.LureBuffDurationMinutes)
                     ? FishingState.ApplyLure
                     : FishingState.CastLine);
 
                 break;
             case FishingState.ApplyLure:
-                Console.WriteLine("[FishingStateMachine]: Applying lure (should be on '2' button)...");
+                Console.WriteLine("[FishingStateMachine]: Applying lure...");
 
                 ApplyLure();
                 _lastLureApplyTime = DateTime.Now;
@@ -84,7 +88,7 @@ public class FishingStateMachine
 
             case FishingState.WaitAndCatch:
                 Console.WriteLine("[FishingStateMachine]: Waiting for a fish to bite...");
-                ListenForFish(cancellationToken, TimeSpan.FromSeconds(20));
+                ListenForFish(cancellationToken, TimeSpan.FromSeconds(AppConfig.Props.FishingChannelDurationSeconds));
                 Console.WriteLine("[FishingStateMachine]: Stopped listening for fish.");
 
                 if (_isBobberDipped)
@@ -121,18 +125,18 @@ public class FishingStateMachine
 
     private void ApplyLure()
     {
-        KeyboardUtils.SendKeyInput(Keys.D2);
+        KeyboardUtils.SendKeyInput(AppConfig.Props.KeyboardKeyApplyLure);
         Thread.Sleep(3000);
     }
 
     private void CastLine()
     {
-        KeyboardUtils.SendKeyInput(Keys.D1);
+        KeyboardUtils.SendKeyInput(AppConfig.Props.KeyboardKeyStartFishing);
     }
 
     private void FindBobber(CancellationToken cancellationToken)
     {
-        MouseUtils.MoveMouseFibonacci(cancellationToken, "World of Warcraft", ref _isBobberFound);
+        MouseUtils.MoveMouseFibonacci(cancellationToken, AppConfig.Props.GameWindowName, ref _isBobberFound);
     }
 
     // go max volume on both win and wow, and mute

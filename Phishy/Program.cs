@@ -1,5 +1,7 @@
-﻿using Phishy.Hooks;
+﻿using Phishy.Configs;
+using Phishy.Hooks;
 using Phishy.Utils;
+using YamlDotNet.Serialization;
 
 namespace Phishy
 {
@@ -12,7 +14,14 @@ namespace Phishy
 
         private static async Task Main()
         {
-            Console.WriteLine("[Main]: Started, pres DEL to stop");
+            Console.CursorVisible = false;
+
+            Console.WriteLine("[Main]: Loading app properties");
+            if (!AppConfig.LoadProperties())
+            {
+                Console.WriteLine("[Main]: Failed to load app properties, exiting...");
+                return;
+            }
 
             Console.WriteLine("[Main]: Setting win volume to max and mute");
             AudioUtils.SetVolumeToMax();
@@ -22,7 +31,7 @@ namespace Phishy
 
             Task initMessageLoopAndHooks = Task.Run(() => { InitHooksAndMessageLoop(cancellationTokenSource.Token); });
 
-            WinEventHook.OnCursorIconChange += (_, e) => { Console.WriteLine(e); FishingStateMachine.NotifyBobberFound(); };
+            WinEventHook.OnCursorIconChange += (_, e) => { Console.WriteLine('\n' + e); FishingStateMachine.NotifyBobberFound(); };
 
             Task stateMachineTask = Task.Run(() =>
             {
@@ -33,6 +42,7 @@ namespace Phishy
                 }
             });
 
+            Console.WriteLine("[Main]: Started, pres DEL to stop");
             while (Console.ReadKey().Key != ConsoleKey.Delete)
             {
                 Thread.Sleep(100);
@@ -52,7 +62,7 @@ namespace Phishy
 
         private static void InitHooksAndMessageLoop(CancellationToken cancellationToken)
         {
-            uint processId = WindowUtils.GetProcessIdByWindowName("World of Warcraft");
+            uint processId = WindowUtils.GetProcessIdByWindowName(AppConfig.Props.GameWindowName);
             while (processId == 0)
             {
                 if (cancellationToken.IsCancellationRequested)
@@ -63,7 +73,7 @@ namespace Phishy
 
                 Console.WriteLine("[Main]: Failed to get processId, will retry!");
                 Thread.Sleep(2000);
-                processId = WindowUtils.GetProcessIdByWindowName("World of Warcraft");
+                processId = WindowUtils.GetProcessIdByWindowName(AppConfig.Props.GameWindowName);
             }
 
             Console.WriteLine($"[Main]: Got process ID: {processId}");
