@@ -23,13 +23,13 @@ public class FishingStateMachine
     private bool _isBobberFound;
 
     private DateTime _lastLureApplyTime;
-    private DateTime _lastSecondLureApplyTime;
+    private DateTime _lastApplyTimeSecondLure;
 
     public FishingStateMachine()
     {
         _currentState = FishingState.Start;
         _lastLureApplyTime = DateTime.Now.AddDays(-69);
-        _lastSecondLureApplyTime = DateTime.Now.AddDays(-69);
+        _lastApplyTimeSecondLure = DateTime.Now.AddDays(-69);
     }
 
     public void Update(CancellationToken cancellationToken)
@@ -64,7 +64,7 @@ public class FishingStateMachine
                 Console.WriteLine("[FishingStateMachine]: Applying second lure...");
 
                 ApplySecondLure();
-                _lastSecondLureApplyTime = DateTime.Now;
+                _lastApplyTimeSecondLure = DateTime.Now;
 
                 TryTransition();
                 break;
@@ -113,9 +113,9 @@ public class FishingStateMachine
                     : FishingState.CastLine);
                 break;
             case FishingState.ApplyLure:
-                if (AppConfig.Props.LureBuffSecondDurationMinutes.HasValue && AppConfig.Props.LureBuffSecondDurationMinutes > 0)
+                if (AppConfig.Props.SecondLureBuffDurationMinutes.HasValue && AppConfig.Props.SecondLureBuffDurationMinutes > 0)
                 {
-                    if (DateTime.Now - _lastSecondLureApplyTime > TimeSpan.FromMinutes(AppConfig.Props.LureBuffSecondDurationMinutes.Value))
+                    if (DateTime.Now - _lastApplyTimeSecondLure > TimeSpan.FromMinutes(AppConfig.Props.SecondLureBuffDurationMinutes.Value))
                     {
                         TransitionTo(FishingState.ApplySecondLure);
                         break;
