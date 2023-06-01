@@ -50,10 +50,7 @@ public class FishingStateMachine
                 Console.WriteLine("[FishingStateMachine]: Moving to center of screen...");
                 MouseUtils.MoveToCenterOfWindow(AppConfig.Props.GameWindowName, true, 100);
 
-                TransitionTo(DateTime.Now - _lastLureApplyTime > TimeSpan.FromMinutes(AppConfig.Props.LureBuffDurationMinutes)
-                    ? FishingState.ApplyLure
-                    : FishingState.CastLine);
-
+                TryTransition();
                 break;
             case FishingState.ApplyLure:
                 Console.WriteLine("[FishingStateMachine]: Applying lure...");
@@ -61,8 +58,62 @@ public class FishingStateMachine
                 ApplyLure();
                 _lastLureApplyTime = DateTime.Now;
 
-                if(AppConfig.Props.LureBuffSecondDurationMinutes.HasValue
-                     && AppConfig.Props.LureBuffSecondDurationMinutes > 0)
+                TryTransition();
+                break;
+            case FishingState.ApplySecondLure:
+                Console.WriteLine("[FishingStateMachine]: Applying second lure...");
+
+                ApplySecondLure();
+                _lastSecondLureApplyTime = DateTime.Now;
+
+                TryTransition();
+                break;
+            case FishingState.CastLine:
+                Console.WriteLine("[FishingStateMachine]: Casting the fishing line...");
+
+                CastLine();
+                _isLineCast = true;
+
+                TryTransition();
+                break;
+
+            case FishingState.FindBobber:
+                Console.WriteLine("[FishingStateMachine]: Looking for the bobber...");
+
+                FindBobber(cancellationToken);
+
+                TryTransition();
+                break;
+            case FishingState.WaitAndCatch:
+                Console.WriteLine("[FishingStateMachine]: Waiting for a fish to bite...");
+                ListenForFish(cancellationToken, TimeSpan.FromSeconds(AppConfig.Props.FishingChannelDurationSeconds));
+                Console.WriteLine("[FishingStateMachine]: Stopped listening for fish.");
+
+                TryTransition();
+                break;
+            case FishingState.CatchFish:
+                Console.WriteLine("[FishingStateMachine]: You caught a fish!");
+
+                MouseUtils.SendMouseInput(MouseButtons.Right);
+                _isLineCast = false;
+                Thread.Sleep(1000);
+
+                TryTransition();
+                break;
+        }
+    }
+
+    private void TryTransition()
+    {
+        switch (_currentState)
+        {
+            case FishingState.Start:
+                TransitionTo(DateTime.Now - _lastLureApplyTime > TimeSpan.FromMinutes(AppConfig.Props.LureBuffDurationMinutes)
+                    ? FishingState.ApplyLure
+                    : FishingState.CastLine);
+                break;
+            case FishingState.ApplyLure:
+                if (AppConfig.Props.LureBuffSecondDurationMinutes.HasValue && AppConfig.Props.LureBuffSecondDurationMinutes > 0)
                 {
                     if (DateTime.Now - _lastSecondLureApplyTime > TimeSpan.FromMinutes(AppConfig.Props.LureBuffSecondDurationMinutes.Value))
                     {
@@ -74,27 +125,16 @@ public class FishingStateMachine
                 TransitionTo(FishingState.CastLine);
                 break;
             case FishingState.ApplySecondLure:
-                Console.WriteLine("[FishingStateMachine]: Applying second lure...");
-
-                ApplySecondLure();
-                _lastSecondLureApplyTime = DateTime.Now;
-
                 TransitionTo(FishingState.CastLine);
                 break;
             case FishingState.CastLine:
-                Console.WriteLine("[FishingStateMachine]: Casting the fishing line...");
-
-                CastLine();
-                _isLineCast = true;
-
-                TransitionTo(FishingState.FindBobber);
+                if (_isLineCast)
+                {
+                    TransitionTo(FishingState.FindBobber);
+                }
                 break;
-
             case FishingState.FindBobber:
-                Console.WriteLine("[FishingStateMachine]: Looking for the bobber...");
-
-                FindBobber(cancellationToken);
-
+                // TODO: cover the case when line is cast but bobber is not found in time and make findBobber async
                 if (_isBobberFound && _isLineCast)
                 {
                     TransitionTo(FishingState.WaitAndCatch);
@@ -104,17 +144,11 @@ public class FishingStateMachine
                     TransitionTo(FishingState.Start);
                 }
                 break;
-
             case FishingState.WaitAndCatch:
-                Console.WriteLine("[FishingStateMachine]: Waiting for a fish to bite...");
-                ListenForFish(cancellationToken, TimeSpan.FromSeconds(AppConfig.Props.FishingChannelDurationSeconds));
-                Console.WriteLine("[FishingStateMachine]: Stopped listening for fish.");
-
                 if (_isBobberDipped)
                 {
                     Console.WriteLine("[FishingStateMachine]: DIP!");
                     _isBobberDipped = false;
-                    Console.WriteLine("[FishingStateMachine]: Resetting IsBobberFound.");
                     _isBobberFound = false;
                     TransitionTo(FishingState.CatchFish);
                 }
@@ -122,18 +156,12 @@ public class FishingStateMachine
                 {
                     TransitionTo(FishingState.Start);
                 }
-
                 break;
-
             case FishingState.CatchFish:
-                Console.WriteLine("[FishingStateMachine]: You caught a fish!");
-
-                MouseUtils.SendMouseInput(MouseButtons.Right);
-                _isLineCast = false;
-                Thread.Sleep(1000);
-
                 TransitionTo(FishingState.Start);
                 break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(_currentState), _currentState, null);
         }
     }
 
@@ -144,11 +172,14 @@ public class FishingStateMachine
 
     private void ApplySecondLure()
     {
-        if (!string.IsNullOrWhiteSpace(AppConfig.Props.KeyboardKeyApplySecondLure) )
+        if (string.IsNullOrWhiteSpace(AppConfig.Props.KeyboardKeyApplySecondLure))
         {
-            KeyboardUtils.SendKeyInput(AppConfig.Props.KeyboardKeyApplySecondLure);
-            Thread.Sleep(3000);
+            Console.WriteLine("[FishingStateMachine]: Can't apply second lure, invalid button configured.");
+            return;
         }
+
+        KeyboardUtils.SendKeyInput(AppConfig.Props.KeyboardKeyApplySecondLure);
+        Thread.Sleep(3000);
     }
     private void ApplyLure()
     {
@@ -179,6 +210,7 @@ public class FishingStateMachine
                 break;
             }
 
+            //TODO move this outside and check during tryTransition and possibly cancel through token
             if (DateTime.Now - lastLineCastTime > timeoutInSeconds)
             {
                 Console.WriteLine($"[FishingStateMachine]: Did not find a fish in {timeoutInSeconds.TotalSeconds} seconds!");
