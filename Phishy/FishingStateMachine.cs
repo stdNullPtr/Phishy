@@ -7,6 +7,7 @@ public enum FishingState
 {
     Start,
     ApplyLure,
+    ApplySecondLure,
     CastLine,
     FindBobber,
     WaitAndCatch,
@@ -22,11 +23,13 @@ public class FishingStateMachine
     private bool _isBobberFound;
 
     private DateTime _lastLureApplyTime;
+    private DateTime _lastSecondLureApplyTime;
 
     public FishingStateMachine()
     {
         _currentState = FishingState.Start;
         _lastLureApplyTime = DateTime.Now.AddDays(-69);
+        _lastSecondLureApplyTime = DateTime.Now.AddDays(-69);
     }
 
     public void Update(CancellationToken cancellationToken)
@@ -55,8 +58,26 @@ public class FishingStateMachine
             case FishingState.ApplyLure:
                 Console.WriteLine("[FishingStateMachine]: Applying lure...");
 
-                ApplyLures();
+                ApplyLure();
                 _lastLureApplyTime = DateTime.Now;
+
+                if(AppConfig.Props.LureBuffSecondDurationMinutes.HasValue
+                     && AppConfig.Props.LureBuffSecondDurationMinutes > 0)
+                {
+                    if (DateTime.Now - _lastSecondLureApplyTime > TimeSpan.FromMinutes(AppConfig.Props.LureBuffSecondDurationMinutes.Value))
+                    {
+                        TransitionTo(FishingState.ApplySecondLure);
+                        break;
+                    }
+                }
+
+                TransitionTo(FishingState.CastLine);
+                break;
+            case FishingState.ApplySecondLure:
+                Console.WriteLine("[FishingStateMachine]: Applying second lure...");
+
+                ApplySecondLure();
+                _lastSecondLureApplyTime = DateTime.Now;
 
                 TransitionTo(FishingState.CastLine);
                 break;
@@ -121,16 +142,18 @@ public class FishingStateMachine
         _currentState = state;
     }
 
-    private void ApplyLures()
+    private void ApplySecondLure()
     {
-        KeyboardUtils.SendKeyInput(AppConfig.Props.KeyboardKeyApplyLure);
-        Thread.Sleep(3000);
-
-        if (!string.IsNullOrWhiteSpace(AppConfig.Props.KeyboardKeyApplySecondLure))
+        if (!string.IsNullOrWhiteSpace(AppConfig.Props.KeyboardKeyApplySecondLure) )
         {
             KeyboardUtils.SendKeyInput(AppConfig.Props.KeyboardKeyApplySecondLure);
             Thread.Sleep(3000);
         }
+    }
+    private void ApplyLure()
+    {
+        KeyboardUtils.SendKeyInput(AppConfig.Props.KeyboardKeyApplyLure);
+        Thread.Sleep(3000);
     }
 
     private void CastLine()

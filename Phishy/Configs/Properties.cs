@@ -16,6 +16,7 @@ namespace Phishy.Configs
         public string KeyboardKeyApplyLure { get; set; }
         public string? KeyboardKeyApplySecondLure { get; set; }
         public int LureBuffDurationMinutes { get; set; }
+        public int? LureBuffSecondDurationMinutes { get; set; }
         public int FishingChannelDurationSeconds { get; set; }
         public string GameWindowName { get; set; }
 
@@ -25,6 +26,7 @@ namespace Phishy.Configs
             KeyboardKeyApplyLure = KeyboardUtils.ConvertToString(Keys.D2);
             KeyboardKeyApplySecondLure = null;
             LureBuffDurationMinutes = TimeSpan.FromMinutes(10).Minutes;
+            LureBuffSecondDurationMinutes = null;
             FishingChannelDurationSeconds = TimeSpan.FromSeconds(20).Seconds;
             GameWindowName = "Game Window Name";
         }
