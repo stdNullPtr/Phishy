@@ -38,11 +38,9 @@ public class FishingStateMachine
                 if (WindowUtils.GetForegroundWindowName() != AppConfig.Props.GameWindowName)
                 {
                     Console.WriteLine($"[FishingStateMachine]: Open game window [{AppConfig.Props.GameWindowName}]...");
-                    Console.SetCursorPosition(Console.GetCursorPosition().Left, Console.GetCursorPosition().Top - 1);
                     Thread.Sleep(1000);
                     break;
                 }
-                Console.WriteLine();
 
                 _isBobberDipped = _isBobberFound = _isLineCast = false;
 
@@ -57,7 +55,7 @@ public class FishingStateMachine
             case FishingState.ApplyLure:
                 Console.WriteLine("[FishingStateMachine]: Applying lure...");
 
-                ApplyLure();
+                ApplyLures();
                 _lastLureApplyTime = DateTime.Now;
 
                 TransitionTo(FishingState.CastLine);
@@ -123,10 +121,16 @@ public class FishingStateMachine
         _currentState = state;
     }
 
-    private void ApplyLure()
+    private void ApplyLures()
     {
         KeyboardUtils.SendKeyInput(AppConfig.Props.KeyboardKeyApplyLure);
         Thread.Sleep(3000);
+
+        if (!string.IsNullOrWhiteSpace(AppConfig.Props.KeyboardKeyApplySecondLure))
+        {
+            KeyboardUtils.SendKeyInput(AppConfig.Props.KeyboardKeyApplySecondLure);
+            Thread.Sleep(3000);
+        }
     }
 
     private void CastLine()
