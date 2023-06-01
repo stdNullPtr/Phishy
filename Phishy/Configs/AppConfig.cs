@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,6 +20,7 @@ public static class AppConfig
         {
             Console.WriteLine("[AppConfig]: Configuration file is missing, a default one will be created and the application will exit!");
             YamlUtils.GenerateSampleRunConfig(CONFIGURATION_FILE_NAME);
+            Process.Start("notepad.exe", CONFIGURATION_FILE_NAME);
             return false;
         }
 
