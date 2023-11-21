@@ -85,13 +85,13 @@ The executable is named "guess.exe" just for the sake of the name being somewhat
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-1. Config
-The process requires a configuration.yaml file in order to start.
-If one isn't present in the same directory as the .exe, a sample will be created and opened for editing.
-The process will exit but you can now edit the text file that opened, adding your configuration for the fishbot depending on the WoW version and keybinds.
-Once started, the program will mute your windows sound and set it to max volume, in preparation for listening for the bobber.
+1. Config<br>
+   The process requires a configuration.yaml file in order to start.
+   If one isn't present in the same directory as the .exe, a sample will be created and opened for editing.
+   The process will exit but you can now edit the text file that opened, adding your configuration for the fishbot depending on the WoW version and keybinds.
+   Once started, the program will mute your windows sound and set it to max volume, in preparation for listening for the bobber.
 
-2. An example fishing setup with the default settings in the config file:
+3. An example fishing setup with the default settings in the config file:
    - place the fishing cast on keybind '1'
    - place the lure on keybind '2'
    - set game window name to 'game-window-name: World of Warcraft' if you are on WotLK
