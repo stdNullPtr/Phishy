@@ -92,15 +92,15 @@ The process will exit but you can now edit the text file that opened, adding you
 Once started, the program will mute your windows sound and set it to max volume, in preparation for listening for the bobber.
 
 2. An example fishing setup with the default settings in the config file:
-  - place the fishing cast on keybind '1'
-  - place the lure on keybind '2'
-  - set game window name to 'game-window-name: World of Warcraft' if you are on WotLK
-  - position yourself in a fishing spot
-  - max zoom in
-  - set game sound volume to ~80%, disable ambient sounds
-  - cast manually fishing a few times to make sure that the bobber lands somewhere around the middle of the screen
-  - start the fishbot, focus wow window, observe
-  - stop by pressind DEL
+   - place the fishing cast on keybind '1'
+   - place the lure on keybind '2'
+   - set game window name to 'game-window-name: World of Warcraft' if you are on WotLK
+   - position yourself in a fishing spot
+   - max zoom in
+   - set game sound volume to ~80%, disable ambient sounds
+   - cast manually fishing a few times to make sure that the bobber lands somewhere around the middle of the screen
+   - start the fishbot, focus wow window, observe
+   - stop by pressind DEL
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
