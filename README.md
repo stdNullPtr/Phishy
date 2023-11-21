@@ -6,7 +6,7 @@
 <p align="center"> :warning:<b>USE AT YOUR OWN RISK</b>:warning:</p>
 
   <p align="center">
-    A universal, <i>different</i>, undetectable at time of writing, out-of-process World of Warcraft fishing bot console app. This project is a better looking, configurable, continuation of my C++ PoC: https://github.com/stdNullPtr/wow-fishbot
+    A universal, <i>different</i>, undetectable at time of writing, out-of-process World of Warcraft fishing bot. This project is a better looking, configurable, continuation of my C++ PoC: https://github.com/stdNullPtr/wow-fishbot
     <br />
     <a href="https://github.com/stdNullPtr/Phishy"><strong>Explore the docs »</strong></a>
     <br />
