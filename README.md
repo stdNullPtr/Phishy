@@ -49,6 +49,17 @@
 
 ![app-screenshot](images/first-launch.png)
 
+This unique fishbot works by cleverly utilizing WinAPI functions to bypass detection and stay out-of-process.
+<br>
+The entire main loop follows an implementation of the State Machine architecture.
+<br>
+Bot structure:
+ - **The 'eyes'** of the bot are the cursor name change events when we hover the bobber: https://learn.microsoft.com/en-us/windows/win32/winauto/event-constants#:~:text=EVENT_OBJECT_NAMECHANGE
+ - **The 'brain'** is the main loop state machine
+ - **The 'ears'** are the Windows sounds when the bobber splashes
+ - **The 'hands'** are simple mouse-click events
+
+With this set up we manage to stay out of the process, and we are able to use the bot in **any** game that follows the same fishing logic.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -126,7 +137,9 @@ Don't forget to give the project a star! Thanks again!
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## TODOs
-* Introduce an UI interface
+* Introduce a graphical UI
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- LICENSE -->
 ## License
