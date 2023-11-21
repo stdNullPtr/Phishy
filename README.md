@@ -44,7 +44,7 @@
 
 ## About The Project
 
-[![Phishy Screen Shot][app-screenshot]](images/first-launch.png)
+![app-screenshot](images/first-launch.png)
 
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -131,15 +131,3 @@ Don't forget to give the project a star! Thanks again!
 Distributed under the MIT License. See `LICENSE.txt` for more information.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
-<!-- MARKDOWN LINKS & IMAGES -->
-<!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[forks-shield]: https://img.shields.io/github/forks/stdNullPtr/Phishy.svg?style=for-the-badge
-[forks-url]: https://github.com/stdNullPtr/Phishy/network/members
-[stars-shield]: https://img.shields.io/github/stars/github_username/repo_name.svg?style=for-the-badge
-[stars-url]: https://github.com/github_username/repo_name/stargazers
-[license-shield]: https://img.shields.io/github/license/github_username/repo_name.svg?style=for-the-badge
-[license-url]: https://github.com/github_username/repo_name/blob/master/LICENSE.txt
-[linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
-[app-screenshot]: images/screenshot.png
