@@ -89,7 +89,7 @@ git clone https://github.com/stdNullPtr/Phishy
 
 1. Open the project in Visual Studio (using the .sln file), you should see something similar: ![installer-image](images/startup.png)
 2. Build (ctrl + shift + B) to verify you can build properly
-3. You can find the binaries in <project root>\Phishy\bin\Debug\net7.0-windows
+3. You can find the binaries in '<project root>\Phishy\bin\Debug\net7.0-windows'
 The executable is named "guess.exe" just for the sake of the name being somewhat random.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
