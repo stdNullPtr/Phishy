@@ -3,6 +3,8 @@
 
 <h3 align="center">Phishy</h3>
 
+<p align="center"> :warning:<b>USE AT YOUR OWN RISK</b>:warning:</p>
+
   <p align="center">
     A universal, <i>different</i> and undetectable at time of writing, World of Warcraft fishing bot console app. This project is a better looking, configurable, continuation of my C++ PoC: https://github.com/stdNullPtr/wow-fishbot
     <br />
