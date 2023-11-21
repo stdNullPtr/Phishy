@@ -113,6 +113,7 @@ The executable is named "guess.exe" just for the sake of the name being somewhat
    - max zoom in
    - set game sound volume to ~80%, disable ambient sounds
    - cast manually fishing a few times to make sure that the bobber lands somewhere around the middle of the screen
+   - make sure you are alone and in a quiet place, the bot will listen for a splash
    - start the fishbot, focus wow window, observe
    - let go of the mouse and keyboard
    - stop by pressind DEL
