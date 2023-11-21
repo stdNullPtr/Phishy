@@ -91,17 +91,16 @@ If one isn't present in the same directory as the .exe, a sample will be created
 The process will exit but you can now edit the text file that opened, adding your configuration for the fishbot depending on the WoW version and keybinds.
 Once started, the program will mute your windows sound and set it to max volume, in preparation for listening for the bobber.
 
-2. Operation
-An example fishing setup with the default settings in the config file:
-- place the fishing cast on keybind '1'
-- place the lure on keybind '2'
-- set game window name to 'game-window-name: World of Warcraft' if you are on WotLK
-- position yourself in a fishing spot
-- max zoom in
-- set game sound volume to ~80%, disable ambient sounds
-- cast manually fishing a few times to make sure that the bobber lands somewhere around the middle of the screen
-- start the fishbot, focus wow window, observe
-- stop by pressind DEL
+2. An example fishing setup with the default settings in the config file:
+  - place the fishing cast on keybind '1'
+  - place the lure on keybind '2'
+  - set game window name to 'game-window-name: World of Warcraft' if you are on WotLK
+  - position yourself in a fishing spot
+  - max zoom in
+  - set game sound volume to ~80%, disable ambient sounds
+  - cast manually fishing a few times to make sure that the bobber lands somewhere around the middle of the screen
+  - start the fishbot, focus wow window, observe
+  - stop by pressind DEL
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -110,7 +109,7 @@ An example fishing setup with the default settings in the config file:
 <!-- CONTRIBUTING -->
 ## Contributing
 
-Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
 
 If you have a suggestion that would make the bot better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement".
 Don't forget to give the project a star! Thanks again!
