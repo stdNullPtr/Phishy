@@ -22,9 +22,12 @@ namespace Phishy
                 return;
             }
 
-            Console.WriteLine("[Main]: Setting win volume to max and mute");
-            AudioUtils.SetVolumeToMax();
-            AudioUtils.MuteSound();
+            if (AppConfig.Props.SetupSound)
+            {
+                Console.WriteLine("[Main]: Setting win volume to max and mute");
+                AudioUtils.SetVolumeToMax();
+                AudioUtils.MuteSound();
+            }
 
             CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
 

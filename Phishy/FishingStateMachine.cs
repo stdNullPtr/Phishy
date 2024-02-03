@@ -56,19 +56,23 @@ public class FishingStateMachine
                 TryTransition();
                 break;
             case FishingState.Logout:
+                Console.WriteLine("[FishingStateMachine]: Logging out...");
                 Logout();
                 TryTransition();
                 break;
             case FishingState.WaitForWintergrasp:
                 if (IsWintergraspRunning())
                 {
+                    Console.WriteLine("[FishingStateMachine]: Wintergrasp is running... sleeping 10 secs");
                     Thread.Sleep(TimeSpan.FromSeconds(10));
                     break;
                 }
+                Console.WriteLine("[FishingStateMachine]: Wintergrasp is no longer running, resuming...");
 
                 TryTransition();
                 break;
             case FishingState.Login:
+                Console.WriteLine("[FishingStateMachine]: Logging in...");
                 Login();
                 TryTransition();
                 break;
@@ -130,11 +134,12 @@ public class FishingStateMachine
             case FishingState.Start:
                 FishingState newState;
 
-                if (AppConfig.Props.WaitForWintergrasp && IsWintergraspAboutToBegin())
+                if (AppConfig.Props.WaitForWintergrasp && (IsWintergraspAboutToBegin() || IsWintergraspRunning()))
                 {
                     newState = FishingState.Logout;
                 }
-                else if (DateTime.Now - _lastLureApplyTime > TimeSpan.FromMinutes(AppConfig.Props.LureBuffDurationMinutes))
+                else if (!string.IsNullOrWhiteSpace(AppConfig.Props.KeyboardKeyApplyLure) 
+                && (DateTime.Now - _lastLureApplyTime > TimeSpan.FromMinutes(AppConfig.Props.LureBuffDurationMinutes)))
                     newState = FishingState.ApplyLure;
                 else
                     newState = FishingState.CastLine;
@@ -307,6 +312,7 @@ public class FishingStateMachine
             }
         }
 
+        
         return false;
     }
 
@@ -323,7 +329,7 @@ public class FishingStateMachine
     }
     private void Login()
     {
-        KeyboardUtils.SendKeyInput(Keys.Enter);
+        KeyboardUtils.SendKeyInput("ENTER");
         Thread.Sleep(TimeSpan.FromSeconds(10));
     }
 }
