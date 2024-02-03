@@ -7,6 +7,8 @@ public sealed class Properties
 {
     [YamlMember(Description = "Keyboard key binding for logout macro (Example: 3)")]
     public string KeyboardPressLogout { get; set; }
+    [YamlMember(Description = "Whether or not to enable logout during Wintergrasp (Example: false)")]
+    public bool WaitForWintergrasp { get; set; }
     [YamlMember(Description = "Keyboard key binding for fishing cast (Example: 1)")]
     public string KeyboardKeyStartFishing { get; set; }
     [YamlMember(Description = "Keyboard key binding for applying lure (optional)")]
@@ -25,6 +27,7 @@ public sealed class Properties
     public Properties()
     {
         KeyboardPressLogout = KeyboardUtils.ConvertToString(Keys.D3);
+        WaitForWintergrasp = false;
         KeyboardKeyStartFishing = KeyboardUtils.ConvertToString(Keys.D1);
         KeyboardKeyApplyLure = KeyboardUtils.ConvertToString(Keys.D2);
         KeyboardKeyApplySecondLure = null;

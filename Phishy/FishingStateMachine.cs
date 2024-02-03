@@ -130,7 +130,7 @@ public class FishingStateMachine
             case FishingState.Start:
                 FishingState newState;
 
-                if (IsWintergraspAboutToBegin())
+                if (AppConfig.Props.WaitForWintergrasp && IsWintergraspAboutToBegin())
                 {
                     newState = FishingState.Logout;
                 }
