@@ -7,6 +7,7 @@ public enum FishingState
 {
     Start,
     Logout,
+    Login,
     WaitForWintergrasp,
     ApplyLure,
     ApplySecondLure,
@@ -65,6 +66,10 @@ public class FishingStateMachine
                     break;
                 }
 
+                TryTransition();
+                break;
+            case FishingState.Login:
+                Login();
                 TryTransition();
                 break;
             case FishingState.ApplyLure:
@@ -140,6 +145,9 @@ public class FishingStateMachine
                 TransitionTo(FishingState.WaitForWintergrasp);
                 break;
             case FishingState.WaitForWintergrasp:
+                TransitionTo(FishingState.Login);
+                break;
+            case FishingState.Login:
                 TransitionTo(FishingState.Start);
                 break;
             case FishingState.ApplyLure:
@@ -312,5 +320,10 @@ public class FishingStateMachine
 
         KeyboardUtils.SendKeyInput(AppConfig.Props.KeyboardPressLogout);
         Thread.Sleep(TimeSpan.FromSeconds(3));
+    }
+    private void Login()
+    {
+        KeyboardUtils.SendKeyInput(Keys.Enter);
+        Thread.Sleep(TimeSpan.FromSeconds(10));
     }
 }
