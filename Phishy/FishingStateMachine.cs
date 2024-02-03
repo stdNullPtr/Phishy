@@ -6,6 +6,8 @@ namespace Phishy;
 public enum FishingState
 {
     Start,
+    Logout,
+    WaitForWintergrasp,
     ApplyLure,
     ApplySecondLure,
     CastLine,
@@ -41,7 +43,7 @@ public class FishingStateMachine
                 if (WindowUtils.GetForegroundWindowName() != AppConfig.Props.GameWindowName)
                 {
                     Console.WriteLine($"[FishingStateMachine]: Open game window [{AppConfig.Props.GameWindowName}]...");
-                    Thread.Sleep(1000);
+                    Thread.Sleep(TimeSpan.FromSeconds(1));
                     break;
                 }
 
@@ -49,6 +51,19 @@ public class FishingStateMachine
 
                 Console.WriteLine("[FishingStateMachine]: Moving to center of screen...");
                 MouseUtils.MoveToCenterOfWindow(AppConfig.Props.GameWindowName, true, 100);
+
+                TryTransition();
+                break;
+            case FishingState.Logout:
+                Logout();
+                TryTransition();
+                break;
+            case FishingState.WaitForWintergrasp:
+                if (IsWintergraspRunning())
+                {
+                    Thread.Sleep(TimeSpan.FromSeconds(10));
+                    break;
+                }
 
                 TryTransition();
                 break;
@@ -96,7 +111,7 @@ public class FishingStateMachine
 
                 MouseUtils.SendMouseInput(MouseButtons.Right);
                 _isLineCast = false;
-                Thread.Sleep(1000);
+                Thread.Sleep(TimeSpan.FromSeconds(1));
 
                 TryTransition();
                 break;
@@ -108,9 +123,24 @@ public class FishingStateMachine
         switch (_currentState)
         {
             case FishingState.Start:
-                TransitionTo(DateTime.Now - _lastLureApplyTime > TimeSpan.FromMinutes(AppConfig.Props.LureBuffDurationMinutes)
-                    ? FishingState.ApplyLure
-                    : FishingState.CastLine);
+                FishingState newState;
+
+                if (IsWintergraspAboutToBegin())
+                {
+                    newState = FishingState.Logout;
+                }
+                else if (DateTime.Now - _lastLureApplyTime > TimeSpan.FromMinutes(AppConfig.Props.LureBuffDurationMinutes))
+                    newState = FishingState.ApplyLure;
+                else
+                    newState = FishingState.CastLine;
+
+                TransitionTo(newState);
+                break;
+            case FishingState.Logout:
+                TransitionTo(FishingState.WaitForWintergrasp);
+                break;
+            case FishingState.WaitForWintergrasp:
+                TransitionTo(FishingState.Start);
                 break;
             case FishingState.ApplyLure:
                 if (AppConfig.Props.SecondLureBuffDurationMinutes.HasValue && AppConfig.Props.SecondLureBuffDurationMinutes > 0)
@@ -179,12 +209,13 @@ public class FishingStateMachine
         }
 
         KeyboardUtils.SendKeyInput(AppConfig.Props.KeyboardKeyApplySecondLure);
-        Thread.Sleep(3000);
+        Thread.Sleep(TimeSpan.FromSeconds(3));
     }
+
     private void ApplyLure()
     {
         KeyboardUtils.SendKeyInput(AppConfig.Props.KeyboardKeyApplyLure);
-        Thread.Sleep(3000);
+        Thread.Sleep(TimeSpan.FromSeconds(3));
     }
 
     private void CastLine()
@@ -217,7 +248,7 @@ public class FishingStateMachine
                 break;
             }
 
-            Thread.Sleep(100);
+            Thread.Sleep(TimeSpan.FromMilliseconds(100));
         }
     }
 
@@ -227,5 +258,59 @@ public class FishingStateMachine
         {
             _isBobberFound = true;
         }
+    }
+
+    public static bool IsWintergraspAboutToBegin()
+    {
+        TimeSpan currentTimeOfDay = DateTime.Now.TimeOfDay;
+
+        for (int hour = 0; hour < 24; hour += 3)
+        {
+            TimeSpan wgStartTime = TimeSpan.FromHours(hour + 1);
+            TimeSpan fewMinutesBeforeWgStart = wgStartTime.Subtract(TimeSpan.FromMinutes(5));
+
+            if (fewMinutesBeforeWgStart < TimeSpan.Zero)
+            {
+                fewMinutesBeforeWgStart = TimeSpan.Zero;
+            }
+
+            if (currentTimeOfDay >= fewMinutesBeforeWgStart && currentTimeOfDay <= wgStartTime)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public static bool IsWintergraspRunning()
+    {
+        TimeSpan currentTimeOfDay = DateTime.Now.TimeOfDay;
+
+        for (int hour = 0; hour < 24; hour += 3)
+        {
+            TimeSpan wgStartTime = TimeSpan.FromHours(hour + 1);
+            TimeSpan wgEndTime = wgStartTime + TimeSpan.FromMinutes(30);
+
+            // Check 10 minutes before start and 10 minutes after end just to be sure we won't be kicked from WG
+            if (currentTimeOfDay - TimeSpan.FromMinutes(10) >= wgStartTime && currentTimeOfDay <= wgEndTime + TimeSpan.FromMinutes(10))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private void Logout()
+    {
+        if (string.IsNullOrWhiteSpace(AppConfig.Props.KeyboardPressLogout))
+        {
+            Console.WriteLine("[FishingStateMachine]: Can't logout, invalid button configured.");
+            return;
+        }
+
+        KeyboardUtils.SendKeyInput(AppConfig.Props.KeyboardPressLogout);
+        Thread.Sleep(TimeSpan.FromSeconds(3));
     }
 }

@@ -1,12 +1,4 @@
-﻿using Phishy.Configs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using YamlDotNet.Serialization;
-
-namespace Phishy.Utils
+﻿namespace Phishy.Utils
 {
     internal class FileUtils
     {

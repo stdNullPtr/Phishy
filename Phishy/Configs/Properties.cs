@@ -1,17 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Phishy.Utils;
+﻿using Phishy.Utils;
 using YamlDotNet.Serialization;
 
 namespace Phishy.Configs;
 
 public sealed class Properties
 {
+    [YamlMember(Description = "Keyboard key binding for logout macro (Example: 3)")]
+    public string KeyboardPressLogout { get; set; }
     [YamlMember(Description = "Keyboard key binding for fishing cast (Example: 1)")]
     public string KeyboardKeyStartFishing { get; set; }
     [YamlMember(Description = "Keyboard key binding for applying lure (optional)")]
@@ -29,6 +24,7 @@ public sealed class Properties
 
     public Properties()
     {
+        KeyboardPressLogout = KeyboardUtils.ConvertToString(Keys.D3);
         KeyboardKeyStartFishing = KeyboardUtils.ConvertToString(Keys.D1);
         KeyboardKeyApplyLure = KeyboardUtils.ConvertToString(Keys.D2);
         KeyboardKeyApplySecondLure = null;

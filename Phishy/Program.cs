@@ -1,7 +1,6 @@
 ﻿using Phishy.Configs;
 using Phishy.Hooks;
 using Phishy.Utils;
-using YamlDotNet.Serialization;
 
 namespace Phishy
 {
