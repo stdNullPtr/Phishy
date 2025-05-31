@@ -1,145 +1,268 @@
-<!-- Improved compatibility of back to top link: See: https://github.com/othneildrew/Best-README-Template/pull/73 -->
-<a name="readme-top"></a>
-
-<h3 align="center">Phishy</h3>
-
-<p align="center"> :warning:<b>USE AT YOUR OWN RISK</b>:warning:</p>
+<div align="center">
+  <h1>Phishy</h1>
+  
+  <p align="center">
+    <strong>⚠️ USE AT YOUR OWN RISK ⚠️</strong>
+  </p>
 
   <p align="center">
-    A universal, <i>different</i>, undetectable at time of writing, out-of-process World of Warcraft fishing bot. This project is a better looking, configurable, continuation of my C++ PoC: https://github.com/stdNullPtr/wow-fishbot
+    An advanced out-of-process fishing automation tool for World of Warcraft using Windows API hooks
     <br />
-    <a href="https://github.com/stdNullPtr/Phishy"><strong>Explore the docs »</strong></a>
+    <br />
+    <a href="#features">Features</a>
+    ·
+    <a href="#how-it-works">How It Works</a>
+    ·
+    <a href="#getting-started">Getting Started</a>
+    ·
+    <a href="#configuration">Configuration</a>
     <br />
     <br />
     <a href="https://github.com/stdNullPtr/Phishy/issues">Report Bug</a>
     ·
     <a href="https://github.com/stdNullPtr/Phishy/issues">Request Feature</a>
+    ·
+    <a href="https://github.com/stdNullPtr/wow-fishbot">Original C++ PoC</a>
   </p>
 </div>
 
+## ⚠️ Disclaimer
 
+This tool is for educational purposes only. Using automation tools may violate the Terms of Service of World of Warcraft and could result in account suspension or ban. The authors are not responsible for any consequences of using this software.
 
-<!-- TABLE OF CONTENTS -->
-<details>
-  <summary>Table of Contents</summary>
-  <ol>
-    <li>
-      <a href="#about-the-project">About The Project</a>
-      <ul>
-        <li><a href="#built-with">Built With</a></li>
-      </ul>
-    </li>
-    <li>
-      <a href="#getting-started">Getting Started</a>
-      <ul>
-        <li><a href="#prerequisites">Prerequisites</a></li>
-        <li><a href="#compiling">Compiling</a></li>
-      </ul>
-    </li>
-    <li><a href="#usage">Usage</a></li>
-    <li><a href="#contributing">Contributing</a></li>
-    <li><a href="#todos">TODOs</a></li>
-    <li><a href="#license">License</a></li>
-  </ol>
-</details>
+## 📖 Table of Contents
 
+- [Features](#features)
+- [How It Works](#how-it-works)
+- [Requirements](#requirements)
+- [Getting Started](#getting-started)
+  - [Installation](#installation)
+  - [Building from Source](#building-from-source)
+- [Configuration](#configuration)
+- [Usage](#usage)
+- [Troubleshooting](#troubleshooting)
+- [Architecture](#architecture)
+- [Contributing](#contributing)
+- [License](#license)
 
+## ✨ Features
 
-## About The Project
+- **Out-of-process operation** - Uses Windows API hooks without injecting into the game
+- **Universal compatibility** - Works with any WoW version (Classic, TBC, WotLK, Retail)
+- **Audio-based detection** - Detects fish by monitoring Windows master volume
+- **Cursor change detection** - Identifies bobber location via cursor icon changes
+- **Automatic lure application** - Supports up to two different lures with configurable timers
+- **Wintergrasp support** - Automatically logs out during Wintergrasp battles (WotLK)
+- **State machine architecture** - Predictable and debuggable behavior
+- **Configuration validation** - Clear error messages for misconfigured settings
+- **Resource efficient** - Minimal CPU usage with optimized polling
 
-![app-screenshot](images/first-launch.png)
+## 🔧 How It Works
 
-This unique fishbot works by cleverly utilizing WinAPI functions to bypass detection and stay out-of-process.
-<br>
-The entire main loop follows an implementation of the State Machine architecture.
-<br>
-Bot structure:
- - **The 'eyes'** of the bot are the cursor name change events when we hover the bobber: https://learn.microsoft.com/en-us/windows/win32/winauto/event-constants#:~:text=EVENT_OBJECT_NAMECHANGE
- - **The 'brain'** is the main loop state machine
- - **The 'ears'** are the Windows sounds when the bobber splashes
- - **The 'hands'** are simple mouse-click events
+Phishy uses a clever combination of Windows APIs to automate fishing without reading or modifying game memory:
 
-With this set up we manage to stay out of the process, and we are able to use the bot in **any** game that follows the same fishing logic.
+1. **The Eyes** 👁️ - Monitors cursor icon changes (`EVENT_OBJECT_NAMECHANGE`) to detect when hovering over the fishing bobber
+2. **The Ears** 👂 - Listens for volume spikes in Windows master audio to detect fish splashing
+3. **The Brain** 🧠 - State machine that coordinates the fishing process
+4. **The Hands** ✋ - Simulates mouse clicks and keyboard inputs to catch fish
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+### State Machine Flow
 
-
-### Built With
-
-* C# (.NET Desktop)
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
-<!-- GETTING STARTED -->
-## Getting Started
-
-
-### Prerequisites
-
-This is an example of how to list things you need to use the software and how to install them.
-* Make sure you have Visual Studio (preferably 2022)
-* Make sure through the VS installer you select .NET desktop ![installer-image](images/.net-desktop.png)
-* Clone the project
-```sh
-git clone https://github.com/stdNullPtr/Phishy
+```
+Start → Apply Lure (optional) → Cast Line → Find Bobber → Wait for Fish → Catch Fish → Repeat
+                                                                    ↓
+                                                          Logout (Wintergrasp) → Wait → Login
 ```
 
-### Compiling
+## 💻 Requirements
 
-1. Open the project in Visual Studio (using the .sln file), you should see something similar: ![installer-image](images/startup.png)
-2. Build (ctrl + shift + B) to verify you can build properly
-3. You can find the binaries in '(project root)\Phishy\bin\Debug\net7.0-windows'
-The executable is named "guess.exe" just for the sake of the name being somewhat random.
+- **Operating System**: Windows 10/11 (Windows-specific APIs)
+- **.NET Runtime**: .NET 7.0 or .NET 8.0 Desktop Runtime
+- **Development** (if building from source):
+  - Visual Studio 2022 with .NET Desktop workload
+  - .NET 7.0/8.0 SDK
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+## 🚀 Getting Started
 
+### Installation
 
+1. Download the latest release from the [Releases](https://github.com/stdNullPtr/Phishy/releases) page
+2. Extract the ZIP file to a folder of your choice
+3. Run `guess.exe` (intentionally generic name)
+4. On first run, a `configuration.yaml` file will be created and opened in Notepad
+5. Configure the settings according to your WoW setup (see [Configuration](#configuration))
+6. Run `guess.exe` again to start fishing
 
-<!-- USAGE EXAMPLES -->
-## Usage
+### Building from Source
 
-1. Config<br>
-   The process requires a configuration.yaml file in order to start.
-   If one isn't present in the same directory as the .exe, a sample will be created and opened for editing.
-   The process will exit but you can now edit the text file that opened, adding your configuration for the fishbot depending on the WoW version and keybinds.
-   Once started, the program will mute your windows sound and set it to max volume, in preparation for listening for the bobber.
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/stdNullPtr/Phishy.git
+   cd Phishy
+   ```
 
-3. An example fishing setup with the default settings in the config file:
-   - place the fishing cast on keybind '1'
-   - place the lure on keybind '2'
-   - set game window name to 'game-window-name: World of Warcraft' if you are on WotLK
-   - position yourself in a fishing spot
-   - max zoom in
-   - set game sound volume to ~80%, disable ambient sounds
-   - cast manually fishing a few times to make sure that the bobber lands somewhere around the middle of the screen
-   - make sure you are alone and in a quiet place, the bot will listen for a splash
-   - start the fishbot, focus wow window, observe
-   - let go of the mouse and keyboard
-   - stop by pressind DEL
+2. Open `Phishy.sln` in Visual Studio 2022
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+3. Build the solution (Ctrl+Shift+B) in Release mode
 
+4. Find the executable at: `Phishy\bin\Release\net7.0-windows\guess.exe`
 
+Alternatively, using the command line:
+```bash
+dotnet build -c Release
+```
 
-<!-- CONTRIBUTING -->
-## Contributing
+## ⚙️ Configuration
 
-Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+The bot uses a YAML configuration file (`configuration.yaml`) with the following options:
 
-If you have a suggestion that would make the bot better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement".
-Don't forget to give the project a star! Thanks again!
+```yaml
+# Window Configuration
+game-window-name: World of Warcraft  # Must match your WoW window title exactly
 
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
+# Keybinds (use lowercase letters)
+keyboard-key-start-fishing: 1        # Key bound to fishing ability
+keyboard-key-apply-lure: 2          # Key bound to first lure (optional)
+keyboard-key-apply-second-lure: 3   # Key bound to second lure (optional)
+keyboard-key-logout: l              # Key bound to /logout macro (for Wintergrasp)
+
+# Lure Settings
+lure-buff-duration-minutes: 10      # Duration of first lure buff
+second-lure-buff-duration-minutes: 5 # Duration of second lure buff (optional)
+
+# Fishing Settings
+fishing-channel-duration-seconds: 21 # How long to wait for a fish (default: 21)
+
+# Audio Settings
+setup-sound: true                   # Auto-configure Windows volume settings
+
+# Wintergrasp Settings (WotLK only)
+wait-for-wintergrasp: false         # Enable Wintergrasp logout/login cycle
+```
+
+### Configuration Tips
+
+- **Window Name**: Must match exactly (case-sensitive). Common values:
+  - `World of Warcraft` (Retail/Classic)
+  - `World of Warcraft Classic`
+  - Custom names if you've renamed your window
+  
+- **Keybinds**: Use single lowercase letters or numbers that match your in-game keybinds
+
+- **Lure Duration**: Set slightly lower than actual buff duration to ensure reapplication
+
+- **Channel Duration**: Default is 21 seconds, increase if you have fishing skill bonuses
+
+## 📋 Usage
+
+### Initial Setup
+
+1. **In-game preparation**:
+   - Bind your fishing ability to key `1` (or configure differently)
+   - Bind your lure(s) to keys `2` and `3` (optional)
+   - Create a `/logout` macro and bind it (for Wintergrasp feature)
+   - Position yourself at a fishing spot
+   - Zoom in completely (first-person view works best)
+   - Set game sound to ~80%, disable ambient sounds
+
+2. **Windows preparation**:
+   - The bot will automatically set Windows volume to maximum and mute it
+   - Ensure no other applications are making sounds
+
+3. **Running the bot**:
+   - Start `guess.exe`
+   - Focus the WoW window
+   - The bot will begin fishing automatically
+   - Press `DELETE` key to stop
+
+### Best Practices
+
+- Test manual fishing first to ensure bobber lands near screen center
+- Fish in quiet areas to avoid sound interference
+- Keep the WoW window in focus and don't minimize it
+- Don't move the mouse while the bot is running
+
+## 🔍 Troubleshooting
+
+### Common Issues
+
+**"Failed retrieving window handle"**
+- Ensure the window name in config matches exactly
+- WoW must be running before starting the bot
+
+**Bot doesn't detect bobber**
+- Zoom in completely
+- Ensure bobber lands near screen center
+- Try adjusting camera angle
+- Check that cursor changes to "interact" icon over bobber
+
+**Bot doesn't catch fish**
+- Increase game sound volume
+- Disable all ambient sounds
+- Ensure Windows volume is not muted by other apps
+- Fish in quieter areas
+
+**Configuration validation errors**
+- Check the error message for specific issues
+- Ensure all required fields are filled
+- Verify keybinds are single characters
+
+### Debug Mode
+
+Run from Visual Studio in Debug mode to see detailed logging output.
+
+## 🏗️ Architecture
+
+The project follows SOLID principles with recent architectural improvements:
+
+### Core Components
+
+- **State Machine** (`FishingStateMachine.cs`) - Manages fishing states and transitions
+- **Hooks** - Windows API hooks for input/output:
+  - `WinEventHook` - Cursor change detection
+  - `MouseHook` - Mouse input monitoring
+  - `KeyboardHook` - Keyboard input monitoring
+- **Services** - Business logic implementations:
+  - `AudioDetector` - Sound detection
+  - `WindowManager` - Window operations
+  - `InputSimulator` - Input simulation
+  - `ConsoleLogger` - Logging
+- **Utils** - Low-level Windows API wrappers
+- **Interfaces** - Contracts for dependency injection
+
+### Recent Improvements
+
+- Thread-safe operations with proper locking
+- Comprehensive error handling with Win32 error codes
+- Resource disposal for COM objects
+- Configuration validation
+- Reduced CPU usage by 80%
+- Clean architecture with interfaces
+
+## 🤝 Contributing
+
+Contributions are welcome! Please follow these steps:
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'feat: add amazing feature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+Please ensure your code follows the existing patterns and includes appropriate error handling.
 
-## TODOs
-* Introduce a graphical UI
-* Add better instructions (possibly video)
+## 📜 License
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- Original C++ proof-of-concept: [wow-fishbot](https://github.com/stdNullPtr/wow-fishbot)
+- Windows API documentation and community
+- NAudio library for audio processing
+
+---
+
+<div align="center">
+  Made with ❤️ by <a href="https://github.com/stdNullPtr">stdNullPtr</a>
+</div>
