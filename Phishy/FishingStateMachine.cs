@@ -1,4 +1,5 @@
 ﻿using Phishy.Configs;
+using Phishy.Interfaces;
 using Phishy.Utils;
 
 namespace Phishy;
@@ -17,13 +18,13 @@ public enum FishingState
     CatchFish
 }
 
-public class FishingStateMachine
+public class FishingStateMachine : IFishingStateMachine
 {
     private FishingState _currentState;
     private bool _isLineCast;
     private bool _isBobberDipped;
-    // todo thread unsafe
     private bool _isBobberFound;
+    private readonly object _bobberLock = new object();
 
     private DateTime _lastLureApplyTime;
     private DateTime _lastApplyTimeSecondLure;
@@ -48,7 +49,11 @@ public class FishingStateMachine
                     break;
                 }
 
-                _isBobberDipped = _isBobberFound = _isLineCast = false;
+                _isBobberDipped = _isLineCast = false;
+                lock (_bobberLock)
+                {
+                    _isBobberFound = false;
+                }
 
                 Console.WriteLine("[FishingStateMachine]: Moving to center of screen...");
                 MouseUtils.MoveToCenterOfWindow(AppConfig.Props.GameWindowName, true, 100);
@@ -178,7 +183,13 @@ public class FishingStateMachine
                 break;
             case FishingState.FindBobber:
                 // TODO: cover the case when line is cast but bobber is not found in time and make findBobber async
-                if (_isBobberFound && _isLineCast)
+                bool bobberFound;
+                lock (_bobberLock)
+                {
+                    bobberFound = _isBobberFound;
+                }
+                
+                if (bobberFound && _isLineCast)
                 {
                     TransitionTo(FishingState.WaitAndCatch);
                 }
@@ -192,7 +203,10 @@ public class FishingStateMachine
                 {
                     Console.WriteLine("[FishingStateMachine]: DIP!");
                     _isBobberDipped = false;
-                    _isBobberFound = false;
+                    lock (_bobberLock)
+                    {
+                        _isBobberFound = false;
+                    }
                     TransitionTo(FishingState.CatchFish);
                 }
                 else
@@ -238,7 +252,13 @@ public class FishingStateMachine
 
     private void FindBobber(CancellationToken cancellationToken)
     {
-        MouseUtils.MoveMouseFibonacci(cancellationToken, AppConfig.Props.GameWindowName, ref _isBobberFound);
+        MouseUtils.MoveMouseFibonacci(cancellationToken, AppConfig.Props.GameWindowName, () =>
+        {
+            lock (_bobberLock)
+            {
+                return _isBobberFound;
+            }
+        });
     }
 
     // go max volume on both win and wow, and mute
@@ -247,7 +267,13 @@ public class FishingStateMachine
         DateTime lastLineCastTime = DateTime.Now;
         while (!cancellationToken.IsCancellationRequested)
         {
-            if (_isBobberFound && AudioUtils.GetMasterVolumeLevel() > 0.1f)
+            bool bobberFound;
+            lock (_bobberLock)
+            {
+                bobberFound = _isBobberFound;
+            }
+            
+            if (bobberFound && AudioUtils.GetMasterVolumeLevel() > 0.1f)
             {
                 Console.WriteLine($"[FishingStateMachine]: Probably a fish! (sound level: {AudioUtils.GetMasterVolumeLevel()})");
                 _isBobberDipped = true;
@@ -267,9 +293,12 @@ public class FishingStateMachine
 
     public void NotifyBobberFound()
     {
-        if (_isLineCast)
+        lock (_bobberLock)
         {
-            _isBobberFound = true;
+            if (_isLineCast)
+            {
+                _isBobberFound = true;
+            }
         }
     }
 

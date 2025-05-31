@@ -29,6 +29,15 @@ public static class AppConfig
 
         Props = props;
 
+        // Validate configuration
+        var validationResult = ConfigValidator.Validate(Props);
+        if (!validationResult.IsValid)
+        {
+            Console.WriteLine(validationResult.ToString());
+            return false;
+        }
+
+        Console.WriteLine("[AppConfig]: Configuration validated successfully.");
         return true;
     }
 }

@@ -39,18 +39,45 @@ namespace Phishy.Hooks
         public void HookKeyboard()
         {
             _hookId = SetHook(_proc);
+            if (_hookId == IntPtr.Zero)
+            {
+                int error = Marshal.GetLastWin32Error();
+                throw new InvalidOperationException($"Failed to install keyboard hook. Error: {error}");
+            }
         }
 
         public void UnHookKeyboard()
         {
-            UnhookWindowsHookEx(_hookId);
+            if (_hookId != IntPtr.Zero)
+            {
+                if (!UnhookWindowsHookEx(_hookId))
+                {
+                    int error = Marshal.GetLastWin32Error();
+                    Console.WriteLine($"[KeyboardHook]: Failed to unhook keyboard. Error: {error}");
+                }
+                _hookId = IntPtr.Zero;
+            }
         }
 
         private IntPtr SetHook(LowLevelKeyboardProc proc)
         {
             using Process curProcess = Process.GetCurrentProcess();
-            using ProcessModule curModule = curProcess.MainModule!;
-            return SetWindowsHookEx(WH_KEYBOARD_LL, proc, GetModuleHandle(curModule.ModuleName), 0);
+            using ProcessModule? curModule = curProcess.MainModule;
+            if (curModule == null)
+            {
+                Console.WriteLine("[KeyboardHook]: Failed to get current module");
+                return IntPtr.Zero;
+            }
+            
+            IntPtr moduleHandle = GetModuleHandle(curModule.ModuleName);
+            if (moduleHandle == IntPtr.Zero)
+            {
+                int error = Marshal.GetLastWin32Error();
+                Console.WriteLine($"[KeyboardHook]: Failed to get module handle. Error: {error}");
+                return IntPtr.Zero;
+            }
+            
+            return SetWindowsHookEx(WH_KEYBOARD_LL, proc, moduleHandle, 0);
         }
 
         private IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)

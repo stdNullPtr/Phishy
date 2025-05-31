@@ -40,7 +40,8 @@ namespace Phishy
                 while (!cancellationTokenSource.IsCancellationRequested)
                 {
                     FishingStateMachine.Update(cancellationTokenSource.Token);
-                    Thread.Sleep(10);
+                    // Reduced polling frequency from 100Hz to 20Hz to save CPU
+                    Thread.Sleep(50);
                 }
             });
 

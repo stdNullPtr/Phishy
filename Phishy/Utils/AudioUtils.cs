@@ -7,26 +7,22 @@ internal class AudioUtils
 {
     public static float GetMasterVolumeLevel()
     {
-        MMDeviceEnumerator enumerator = new MMDeviceEnumerator();
-        MMDevice device = enumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
-
-        AudioMeterInformation meter = device.AudioMeterInformation;
-        float volumeLevel = meter.MasterPeakValue;
-
-        return volumeLevel;
+        using var enumerator = new MMDeviceEnumerator();
+        using var device = enumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
+        return device.AudioMeterInformation.MasterPeakValue;
     }
 
     public static void SetVolumeToMax()
     {
-        MMDeviceEnumerator enumerator = new MMDeviceEnumerator();
-        MMDevice device = enumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
+        using var enumerator = new MMDeviceEnumerator();
+        using var device = enumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
         device.AudioEndpointVolume.MasterVolumeLevelScalar = 1.0f;
     }
 
     public static void MuteSound()
     {
-        MMDeviceEnumerator enumerator = new MMDeviceEnumerator();
-        MMDevice device = enumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
+        using var enumerator = new MMDeviceEnumerator();
+        using var device = enumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
         device.AudioEndpointVolume.Mute = true;
     }
 }

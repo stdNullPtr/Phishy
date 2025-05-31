@@ -7,8 +7,8 @@ internal class MouseUtils
     private const int INPUT_MOUSE = 0;
     private const int MOUSEEVENTF_RIGHTDOWN = 0x0008;
     private const int MOUSEEVENTF_RIGHTUP = 0x0010;
-    private const int MOUSEEVENTF_LEFTDOWN = 0x0008;
-    private const int MOUSEEVENTF_LEFTUP = 0x0010;
+    private const int MOUSEEVENTF_LEFTDOWN = 0x0002;
+    private const int MOUSEEVENTF_LEFTUP = 0x0004;
 
     [DllImport("user32.dll")]
     private static extern uint SendInput(uint nInputs, INPUT[] pInputs, int cbSize);
@@ -106,7 +106,7 @@ internal class MouseUtils
 
         MoveCursor(centerPoint, smoothly);
     }
-    public static void MoveMouseFibonacci(CancellationToken cancellationToken, string windowName, ref bool isBobberAlreadyFound)
+    public static void MoveMouseFibonacci(CancellationToken cancellationToken, string windowName, Func<bool> isBobberFound)
     {
         GetCursorPos(out var startingPoint);
 
@@ -121,7 +121,7 @@ internal class MouseUtils
 
         for (int i = 0; i < iterations; i++)
         {
-            if (cancellationToken.IsCancellationRequested || isBobberAlreadyFound)
+            if (cancellationToken.IsCancellationRequested || isBobberFound())
             {
                 break;
             }
