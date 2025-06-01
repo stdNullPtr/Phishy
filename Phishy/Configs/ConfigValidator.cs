@@ -8,19 +8,15 @@ public class ConfigValidator
     {
         var errors = new List<string>();
 
-        // Window name validation
         if (string.IsNullOrWhiteSpace(properties.GameWindowName))
         {
             errors.Add("GameWindowName is required");
         }
 
-        // Keyboard key validations
         if (string.IsNullOrWhiteSpace(properties.KeyboardKeyStartFishing))
         {
             errors.Add("KeyboardKeyStartFishing is required");
         }
-
-        // Timing validations
         if (properties.FishingChannelDurationSeconds < 1 || properties.FishingChannelDurationSeconds > 60)
         {
             errors.Add("FishingChannelDurationSeconds must be between 1 and 60 seconds");
@@ -44,7 +40,6 @@ public class ConfigValidator
             }
         }
 
-        // Logout/login key validations
         if (properties.WaitForWintergrasp)
         {
             if (string.IsNullOrWhiteSpace(properties.KeyboardPressLogout))

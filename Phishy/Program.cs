@@ -24,9 +24,25 @@ namespace Phishy
 
             if (AppConfig.Props.SetupSound)
             {
-                Console.WriteLine("[Main]: Setting win volume to max and mute");
+                Console.WriteLine("[Main]: Audio setup enabled - configuring audio settings...");
+                
+                Console.WriteLine("[Main]: Audio state BEFORE configuration:");
+                AudioUtils.LogAudioDeviceInfo();
+                
+                Console.WriteLine("[Main]: Setting win volume to max...");
                 AudioUtils.SetVolumeToMax();
+                
+                Console.WriteLine("[Main]: Muting sound...");
                 AudioUtils.MuteSound();
+                
+                Console.WriteLine("[Main]: Audio state AFTER configuration:");
+                AudioUtils.LogAudioDeviceInfo();
+            }
+            else
+            {
+                Console.WriteLine("[Main]: Audio setup disabled in config (SetupSound = false)");
+                Console.WriteLine("[Main]: Current audio state:");
+                AudioUtils.LogAudioDeviceInfo();
             }
 
             CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
@@ -40,13 +56,12 @@ namespace Phishy
                 while (!cancellationTokenSource.IsCancellationRequested)
                 {
                     FishingStateMachine.Update(cancellationTokenSource.Token);
-                    // Reduced polling frequency from 100Hz to 20Hz to save CPU
                     Thread.Sleep(50);
                 }
             });
 
-            Console.WriteLine("[Main]: Started, press DEL to stop");
-            while (Console.ReadKey().Key != ConsoleKey.Delete)
+            Console.WriteLine("[Main]: Started, press END to stop");
+            while (Console.ReadKey().Key != ConsoleKey.End)
             {
                 Thread.Sleep(100);
             }
@@ -82,7 +97,6 @@ namespace Phishy
             Console.WriteLine($"[Main]: Got process ID: {processId}");
             WinEventHook.HookWinEvent(processId);
 
-            // start message loop
             Application.Run();
         }
     }

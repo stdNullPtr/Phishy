@@ -261,10 +261,16 @@ public class FishingStateMachine : IFishingStateMachine
         });
     }
 
-    // go max volume on both win and wow, and mute
     private void ListenForFish(CancellationToken cancellationToken, TimeSpan timeoutInSeconds)
     {
         DateTime lastLineCastTime = DateTime.Now;
+        DateTime lastLogTime = DateTime.Now;
+        int checkCount = 0;
+        float maxSoundLevel = 0f;
+        const float FISH_DETECTION_THRESHOLD = 0.1f;
+        
+        Console.WriteLine($"[FishingStateMachine]: Starting to listen for fish splash (threshold: {FISH_DETECTION_THRESHOLD})...");
+        
         while (!cancellationToken.IsCancellationRequested)
         {
             bool bobberFound;
@@ -273,9 +279,24 @@ public class FishingStateMachine : IFishingStateMachine
                 bobberFound = _isBobberFound;
             }
             
-            if (bobberFound && AudioUtils.GetMasterVolumeLevel() > 0.1f)
+            float currentSoundLevel = AudioUtils.GetMasterVolumeLevel();
+            checkCount++;
+            
+            if (currentSoundLevel > maxSoundLevel)
             {
-                Console.WriteLine($"[FishingStateMachine]: Probably a fish! (sound level: {AudioUtils.GetMasterVolumeLevel()})");
+                maxSoundLevel = currentSoundLevel;
+            }
+            
+            // Log every 2 seconds or when significant sound detected
+            if (DateTime.Now - lastLogTime > TimeSpan.FromSeconds(2) || currentSoundLevel > 0.01f)
+            {
+                Console.WriteLine($"[FishingStateMachine]: Listening... Bobber found: {bobberFound}, Current sound: {currentSoundLevel:F4}, Max sound: {maxSoundLevel:F4}, Checks: {checkCount}");
+                lastLogTime = DateTime.Now;
+            }
+            
+            if (bobberFound && currentSoundLevel > FISH_DETECTION_THRESHOLD)
+            {
+                Console.WriteLine($"[FishingStateMachine]: FISH DETECTED! Sound level: {currentSoundLevel:F4} (threshold: {FISH_DETECTION_THRESHOLD})");
                 _isBobberDipped = true;
                 break;
             }
@@ -283,7 +304,7 @@ public class FishingStateMachine : IFishingStateMachine
             //TODO move this outside and check during tryTransition and possibly cancel through token
             if (DateTime.Now - lastLineCastTime > timeoutInSeconds)
             {
-                Console.WriteLine($"[FishingStateMachine]: Did not find a fish in {timeoutInSeconds.TotalSeconds} seconds!");
+                Console.WriteLine($"[FishingStateMachine]: Timeout after {timeoutInSeconds.TotalSeconds} seconds! Max sound detected: {maxSoundLevel:F4}");
                 break;
             }
 

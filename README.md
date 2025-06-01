@@ -77,10 +77,10 @@ Start → Apply Lure (optional) → Cast Line → Find Bobber → Wait for Fish 
 ## 💻 Requirements
 
 - **Operating System**: Windows 10/11 (Windows-specific APIs)
-- **.NET Runtime**: .NET 7.0 or .NET 8.0 Desktop Runtime
+- **.NET Runtime**: .NET 9.0 Desktop Runtime
 - **Development** (if building from source):
   - Visual Studio 2022 with .NET Desktop workload
-  - .NET 7.0/8.0 SDK
+  - .NET 9.0 SDK
 
 ## 🚀 Getting Started
 
@@ -105,7 +105,7 @@ Start → Apply Lure (optional) → Cast Line → Find Bobber → Wait for Fish 
 
 3. Build the solution (Ctrl+Shift+B) in Release mode
 
-4. Find the executable at: `Phishy\bin\Release\net7.0-windows\guess.exe`
+4. Find the executable at: `Phishy\bin\Release\net9.0-windows\guess.exe`
 
 Alternatively, using the command line:
 ```bash

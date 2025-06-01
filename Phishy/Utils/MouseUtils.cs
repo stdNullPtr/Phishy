@@ -46,9 +46,8 @@ internal class MouseUtils
         mouseInput.Data.Mouse.Flags = pressedFlags;
         SendInput(1, new[] { mouseInput }, INPUT.Size);
 
-        Thread.Sleep(50); // Delay between mouse events (adjust as needed)
+        Thread.Sleep(50); // adjust as needed
 
-        // Release the mouse button
         mouseInput.Data.Mouse.Flags = releaseFlags;
         SendInput(1, new[] { mouseInput }, INPUT.Size);
     }
@@ -67,8 +66,8 @@ internal class MouseUtils
             int startY = cursorPosition.Y;
             int targetX = targetPoint.X;
             int targetY = targetPoint.Y;
-            const int steps = 100;     // Number of steps for interpolation
-            const int delay = 10;      // Delay between each step in milliseconds
+            const int steps = 100;
+            const int delay = 10;
 
             for (int i = 0; i <= steps; i++)
             {
@@ -129,14 +128,10 @@ internal class MouseUtils
             angle += angularSpeed;
             radius += radiusMod;
 
-            // Calculate the new mouse position
             startingPoint.X += (int)(radius * Math.Cos(angle));
             startingPoint.Y += (int)(radius * Math.Sin(angle));
 
-            // Set the mouse position
             SetCursorPos(startingPoint.X, startingPoint.Y);
-
-            // Sleep to control the speed of movement
             Thread.Sleep(10);
         }
     }
