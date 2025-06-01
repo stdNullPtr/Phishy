@@ -2,6 +2,18 @@
   <h1>Phishy</h1>
   
   <p align="center">
+    <a href="https://github.com/stdNullPtr/Phishy/releases/latest">
+      <img alt="Latest Release" src="https://img.shields.io/github/v/release/stdNullPtr/Phishy?style=for-the-badge&logo=github">
+    </a>
+    <a href="https://github.com/stdNullPtr/Phishy/releases">
+      <img alt="Downloads" src="https://img.shields.io/github/downloads/stdNullPtr/Phishy/total?style=for-the-badge&logo=github">
+    </a>
+    <a href="https://github.com/stdNullPtr/Phishy/blob/master/LICENSE">
+      <img alt="License" src="https://img.shields.io/github/license/stdNullPtr/Phishy?style=for-the-badge">
+    </a>
+  </p>
+  
+  <p align="center">
     <strong>⚠️ USE AT YOUR OWN RISK ⚠️</strong>
   </p>
 
@@ -86,7 +98,12 @@ Start → Apply Lure (optional) → Cast Line → Find Bobber → Wait for Fish 
 
 ### Installation
 
-1. Download the latest release from the [Releases](https://github.com/stdNullPtr/Phishy/releases) page
+1. **Download the appropriate version for your system:**
+   - **For most users:** Download the latest Windows 64-bit version from the [Releases page](https://github.com/stdNullPtr/Phishy/releases/latest)
+   - **For 32-bit systems:** Download the Windows x86 version from the [Releases page](https://github.com/stdNullPtr/Phishy/releases/latest)
+   
+   > Not sure which version to choose? If you're running Windows 10/11, choose the 64-bit version.
+
 2. Extract the ZIP file to a folder of your choice
 3. Run `guess.exe` (intentionally generic name)
 4. On first run, a `configuration.yaml` file will be created and opened in Notepad
