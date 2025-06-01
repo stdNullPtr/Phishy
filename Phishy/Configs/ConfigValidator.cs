@@ -48,6 +48,14 @@ public class ConfigValidator
             }
         }
 
+        if (properties.UseInteractKey)
+        {
+            if (string.IsNullOrWhiteSpace(properties.KeyboardKeyInteract))
+            {
+                errors.Add("KeyboardKeyInteract is required when UseInteractKey is enabled");
+            }
+        }
+
         return new ValidationResult(errors);
     }
 }

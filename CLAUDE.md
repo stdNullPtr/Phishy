@@ -69,6 +69,22 @@ The audio detection system is critical for fish detection:
 - Resource disposal for COM objects
 - Exit key is END (not DEL)
 
+### Interact Key Feature
+
+The bot supports two fishing modes:
+
+1. **Traditional Mode (default)**: Uses cursor detection + mouse clicks
+   - Detects bobber via cursor icon changes (EVENT_OBJECT_NAMECHANGE)
+   - Moves mouse in spiral pattern to find bobber
+   - Right-clicks on bobber to catch fish
+
+2. **Interact Key Mode**: Uses WoW's "Interact with Target" feature
+   - Set `use-interact-key: true` in configuration.yaml
+   - Configure `keyboard-key-interact` (default: f)
+   - Skips bobber detection entirely
+   - Uses keyboard interaction instead of mouse clicks
+   - Requires WoW expansion that supports interact feature (not available in vanilla)
+
 ### Testing Audio Issues
 
 If audio detection isn't working:

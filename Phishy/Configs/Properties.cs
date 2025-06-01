@@ -35,6 +35,12 @@ public sealed class Properties
     [YamlMember(Description = "Window name of the game, when you hover over it in the taskbar")]
     public string GameWindowName { get; set; }
 
+    [YamlMember(Description = "Use interact key instead of mouse clicking for fishing (requires WoW expansion with interact feature, Default: false)")]
+    public bool UseInteractKey { get; set; }
+
+    [YamlMember(Description = "Keyboard key binding for interact with target (required if UseInteractKey is true, Default: f)")]
+    public string? KeyboardKeyInteract { get; set; }
+
     public Properties()
     {
         KeyboardPressLogout = KeyboardUtils.ConvertToString(Keys.D3);
@@ -46,5 +52,7 @@ public sealed class Properties
         SecondLureBuffDurationMinutes = null;
         FishingChannelDurationSeconds = TimeSpan.FromSeconds(20).Seconds;
         GameWindowName = "Game Window Name";
+        UseInteractKey = false;
+        KeyboardKeyInteract = KeyboardUtils.ConvertToString(Keys.F);
     }
 }

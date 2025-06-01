@@ -123,7 +123,15 @@ public class FishingStateMachine : IFishingStateMachine
             case FishingState.CatchFish:
                 Console.WriteLine("[FishingStateMachine]: You caught a fish!");
 
-                MouseUtils.SendMouseInput(MouseButtons.Right);
+                if (AppConfig.Props.UseInteractKey)
+                {
+                    Console.WriteLine($"[FishingStateMachine]: Using interact key: {AppConfig.Props.KeyboardKeyInteract}");
+                    KeyboardUtils.SendKeyInput(AppConfig.Props.KeyboardKeyInteract!);
+                }
+                else
+                {
+                    MouseUtils.SendMouseInput(MouseButtons.Right);
+                }
                 _isLineCast = false;
                 Thread.Sleep(TimeSpan.FromSeconds(1));
 
@@ -178,7 +186,14 @@ public class FishingStateMachine : IFishingStateMachine
             case FishingState.CastLine:
                 if (_isLineCast)
                 {
-                    TransitionTo(FishingState.FindBobber);
+                    if (AppConfig.Props.UseInteractKey)
+                    {
+                        TransitionTo(FishingState.WaitAndCatch);
+                    }
+                    else
+                    {
+                        TransitionTo(FishingState.FindBobber);
+                    }
                 }
                 break;
             case FishingState.FindBobber:
@@ -269,7 +284,8 @@ public class FishingStateMachine : IFishingStateMachine
         float maxSoundLevel = 0f;
         const float FISH_DETECTION_THRESHOLD = 0.1f;
         
-        Console.WriteLine($"[FishingStateMachine]: Starting to listen for fish splash (threshold: {FISH_DETECTION_THRESHOLD})...");
+        string mode = AppConfig.Props.UseInteractKey ? "interact key" : "mouse click";
+        Console.WriteLine($"[FishingStateMachine]: Starting to listen for fish splash (threshold: {FISH_DETECTION_THRESHOLD}, mode: {mode})...");
         
         while (!cancellationToken.IsCancellationRequested)
         {
@@ -290,11 +306,16 @@ public class FishingStateMachine : IFishingStateMachine
             // Log every 2 seconds or when significant sound detected
             if (DateTime.Now - lastLogTime > TimeSpan.FromSeconds(2) || currentSoundLevel > 0.01f)
             {
-                Console.WriteLine($"[FishingStateMachine]: Listening... Bobber found: {bobberFound}, Current sound: {currentSoundLevel:F4}, Max sound: {maxSoundLevel:F4}, Checks: {checkCount}");
+                string statusMsg = AppConfig.Props.UseInteractKey 
+                    ? $"Interact mode: Ready, Current sound: {currentSoundLevel:F4}, Max sound: {maxSoundLevel:F4}, Checks: {checkCount}"
+                    : $"Bobber found: {bobberFound}, Current sound: {currentSoundLevel:F4}, Max sound: {maxSoundLevel:F4}, Checks: {checkCount}";
+                Console.WriteLine($"[FishingStateMachine]: Listening... {statusMsg}");
                 lastLogTime = DateTime.Now;
             }
             
-            if (bobberFound && currentSoundLevel > FISH_DETECTION_THRESHOLD)
+            bool canDetectFish = AppConfig.Props.UseInteractKey || bobberFound;
+            
+            if (canDetectFish && currentSoundLevel > FISH_DETECTION_THRESHOLD)
             {
                 Console.WriteLine($"[FishingStateMachine]: FISH DETECTED! Sound level: {currentSoundLevel:F4} (threshold: {FISH_DETECTION_THRESHOLD})");
                 _isBobberDipped = true;
