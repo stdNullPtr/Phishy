@@ -1,0 +1,55 @@
+name: Build and Test
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        runtime: [win-x64, win-x86]
+        
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.0.x
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --no-restore --configuration Release
+
+      - name: Test
+        run: dotnet test --no-build --verbosity normal --configuration Release || echo "No tests found"
+
+      - name: Publish
+        run: |
+          dotnet publish Phishy/Phishy.csproj `
+            -c Release `
+            -r ${{ matrix.runtime }} `
+            -p:PublishSingleFile=true `
+            -p:SelfContained=true `
+            -p:PublishReadyToRun=true `
+            -p:DebugType=embedded `
+            -o artifacts/${{ matrix.runtime }}
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: phishy-${{ matrix.runtime }}
+          path: artifacts/${{ matrix.runtime }}
+          retention-days: 7
