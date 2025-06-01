@@ -55,8 +55,15 @@ public class FishingStateMachine : IFishingStateMachine
                     _isBobberFound = false;
                 }
 
-                Console.WriteLine("[FishingStateMachine]: Moving to center of screen...");
-                MouseUtils.MoveToCenterOfWindow(AppConfig.Props.GameWindowName, true, 100);
+                if (!AppConfig.Props.UseInteractKey)
+                {
+                    Console.WriteLine("[FishingStateMachine]: Moving to center of screen...");
+                    MouseUtils.MoveToCenterOfWindow(AppConfig.Props.GameWindowName, true, 100);
+                }
+                else
+                {
+                    Console.WriteLine("[FishingStateMachine]: Interact mode enabled - skipping mouse positioning...");
+                }
 
                 TryTransition();
                 break;
@@ -303,8 +310,8 @@ public class FishingStateMachine : IFishingStateMachine
                 maxSoundLevel = currentSoundLevel;
             }
             
-            // Log every 2 seconds or when significant sound detected
-            if (DateTime.Now - lastLogTime > TimeSpan.FromSeconds(2) || currentSoundLevel > 0.01f)
+            // Log every 5 seconds or when significant sound detected (higher threshold)
+            if (DateTime.Now - lastLogTime > TimeSpan.FromSeconds(5) || currentSoundLevel > 0.05f)
             {
                 string statusMsg = AppConfig.Props.UseInteractKey 
                     ? $"Interact mode: Ready, Current sound: {currentSoundLevel:F4}, Max sound: {maxSoundLevel:F4}, Checks: {checkCount}"

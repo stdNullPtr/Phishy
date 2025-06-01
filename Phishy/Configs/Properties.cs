@@ -53,6 +53,6 @@ public sealed class Properties
         FishingChannelDurationSeconds = TimeSpan.FromSeconds(20).Seconds;
         GameWindowName = "Game Window Name";
         UseInteractKey = false;
-        KeyboardKeyInteract = KeyboardUtils.ConvertToString(Keys.F);
+        KeyboardKeyInteract = "f";
     }
 }
