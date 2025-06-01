@@ -7,6 +7,12 @@
     <Nullable>enable</Nullable>
     <UseWindowsForms>True</UseWindowsForms>
     <AssemblyName>guess</AssemblyName>
+    <!-- Build configuration for releases -->
+    <PublishSingleFile>true</PublishSingleFile>
+    <SelfContained>true</SelfContained>
+    <PublishReadyToRun>true</PublishReadyToRun>
+    <DebugType>embedded</DebugType>
+    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="NAudio" />

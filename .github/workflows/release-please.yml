@@ -1,0 +1,72 @@
+name: Release Please
+
+on:
+  push:
+    branches:
+      - master
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
+    steps:
+      - uses: googleapis/release-please-action@v4
+        id: release
+        with:
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+  build-and-release:
+    needs: release-please
+    if: ${{ needs.release-please.outputs.release_created }}
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        include:
+          - runtime: win-x64
+            name: Windows-x64
+          - runtime: win-x86
+            name: Windows-x86
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.0.x
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build and Publish
+        run: |
+          dotnet publish Phishy/Phishy.csproj `
+            -c Release `
+            -r ${{ matrix.runtime }} `
+            -p:PublishSingleFile=true `
+            -p:SelfContained=true `
+            -p:PublishReadyToRun=true `
+            -p:DebugType=embedded `
+            -o publish/${{ matrix.runtime }}
+
+      - name: Create ZIP archive
+        run: |
+          Compress-Archive -Path publish/${{ matrix.runtime }}/* -DestinationPath Phishy-${{ needs.release-please.outputs.tag_name }}-${{ matrix.name }}.zip
+
+      - name: Upload Release Artifacts
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ needs.release-please.outputs.tag_name }}
+          files: |
+            Phishy-${{ needs.release-please.outputs.tag_name }}-${{ matrix.name }}.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
