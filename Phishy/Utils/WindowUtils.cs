@@ -28,8 +28,8 @@ internal class WindowUtils
         IntPtr windowHandle = FindWindow(null, windowName);
         if (windowHandle == IntPtr.Zero)
         {
-            int error = Marshal.GetLastWin32Error();
-            Console.WriteLine($"[WindowUtils]: Failed retrieving window handle for '{windowName}'. Error: {error}");
+            int win32Error = Marshal.GetLastWin32Error();
+            Console.WriteLine($"[WindowUtils]: Failed retrieving window handle for '{windowName}'. Error: {win32Error}");
             return null;
         }
 
@@ -41,16 +41,16 @@ internal class WindowUtils
 
             if (!ClientToScreen(windowHandle, ref centerPoint))
             {
-                int error = Marshal.GetLastWin32Error();
-                Console.WriteLine($"[WindowUtils]: Failed ClientToScreen. Error: {error}");
+                int clientToScreenError = Marshal.GetLastWin32Error();
+                Console.WriteLine($"[WindowUtils]: Failed ClientToScreen. Error: {clientToScreenError}");
                 return null;
             }
 
             return centerPoint;
         }
 
-        int error = Marshal.GetLastWin32Error();
-        Console.WriteLine($"[WindowUtils]: Failed GetClientRect. Error: {error}");
+        int getClientRectError = Marshal.GetLastWin32Error();
+        Console.WriteLine($"[WindowUtils]: Failed GetClientRect. Error: {getClientRectError}");
         return null;
     }
 

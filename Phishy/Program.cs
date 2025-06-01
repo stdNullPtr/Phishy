@@ -45,7 +45,7 @@ namespace Phishy
                 }
             });
 
-            Console.WriteLine("[Main]: Started, pres DEL to stop");
+            Console.WriteLine("[Main]: Started, press DEL to stop");
             while (Console.ReadKey().Key != ConsoleKey.Delete)
             {
                 Thread.Sleep(100);

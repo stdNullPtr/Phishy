@@ -47,9 +47,9 @@ public class ConfigValidator
         // Logout/login key validations
         if (properties.WaitForWintergrasp)
         {
-            if (string.IsNullOrWhiteSpace(properties.KeyboardKeyLogout))
+            if (string.IsNullOrWhiteSpace(properties.KeyboardPressLogout))
             {
-                errors.Add("KeyboardKeyLogout is required when WaitForWintergrasp is enabled");
+                errors.Add("KeyboardPressLogout is required when WaitForWintergrasp is enabled");
             }
         }
 
