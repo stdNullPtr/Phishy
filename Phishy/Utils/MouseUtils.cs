@@ -7,8 +7,8 @@ internal class MouseUtils
     private const int INPUT_MOUSE = 0;
     private const int MOUSEEVENTF_RIGHTDOWN = 0x0008;
     private const int MOUSEEVENTF_RIGHTUP = 0x0010;
-    private const int MOUSEEVENTF_LEFTDOWN = 0x0008;
-    private const int MOUSEEVENTF_LEFTUP = 0x0010;
+    private const int MOUSEEVENTF_LEFTDOWN = 0x0002;
+    private const int MOUSEEVENTF_LEFTUP = 0x0004;
 
     [DllImport("user32.dll")]
     private static extern uint SendInput(uint nInputs, INPUT[] pInputs, int cbSize);
@@ -46,9 +46,8 @@ internal class MouseUtils
         mouseInput.Data.Mouse.Flags = pressedFlags;
         SendInput(1, new[] { mouseInput }, INPUT.Size);
 
-        Thread.Sleep(50); // Delay between mouse events (adjust as needed)
+        Thread.Sleep(50); // adjust as needed
 
-        // Release the mouse button
         mouseInput.Data.Mouse.Flags = releaseFlags;
         SendInput(1, new[] { mouseInput }, INPUT.Size);
     }
@@ -67,8 +66,8 @@ internal class MouseUtils
             int startY = cursorPosition.Y;
             int targetX = targetPoint.X;
             int targetY = targetPoint.Y;
-            const int steps = 100;     // Number of steps for interpolation
-            const int delay = 10;      // Delay between each step in milliseconds
+            const int steps = 100;
+            const int delay = 10;
 
             for (int i = 0; i <= steps; i++)
             {
@@ -106,7 +105,7 @@ internal class MouseUtils
 
         MoveCursor(centerPoint, smoothly);
     }
-    public static void MoveMouseFibonacci(CancellationToken cancellationToken, string windowName, ref bool isBobberAlreadyFound)
+    public static void MoveMouseFibonacci(CancellationToken cancellationToken, string windowName, Func<bool> isBobberFound)
     {
         GetCursorPos(out var startingPoint);
 
@@ -121,7 +120,7 @@ internal class MouseUtils
 
         for (int i = 0; i < iterations; i++)
         {
-            if (cancellationToken.IsCancellationRequested || isBobberAlreadyFound)
+            if (cancellationToken.IsCancellationRequested || isBobberFound())
             {
                 break;
             }
@@ -129,14 +128,10 @@ internal class MouseUtils
             angle += angularSpeed;
             radius += radiusMod;
 
-            // Calculate the new mouse position
             startingPoint.X += (int)(radius * Math.Cos(angle));
             startingPoint.Y += (int)(radius * Math.Sin(angle));
 
-            // Set the mouse position
             SetCursorPos(startingPoint.X, startingPoint.Y);
-
-            // Sleep to control the speed of movement
             Thread.Sleep(10);
         }
     }

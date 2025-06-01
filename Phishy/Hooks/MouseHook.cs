@@ -22,7 +22,7 @@ namespace Phishy.Hooks
 
         private delegate IntPtr LowLevelMouseProc(int nCode, IntPtr wParam, IntPtr lParam);
         private readonly LowLevelMouseProc _hookProcDelegate;
-        private static IntPtr _hookId = IntPtr.Zero;
+        private IntPtr _hookId = IntPtr.Zero;
 
         public event EventHandler<string>? OnCursorMove;
 
@@ -54,20 +54,45 @@ namespace Phishy.Hooks
         public void HookMouse()
         {
             _hookId = SetHook(_hookProcDelegate);
+            if (_hookId == IntPtr.Zero)
+            {
+                int error = Marshal.GetLastWin32Error();
+                throw new InvalidOperationException($"Failed to install mouse hook. Error: {error}");
+            }
         }
 
         public void UnHookMouse()
         {
-            UnhookWindowsHookEx(_hookId);
+            if (_hookId != IntPtr.Zero)
+            {
+                if (!UnhookWindowsHookEx(_hookId))
+                {
+                    int error = Marshal.GetLastWin32Error();
+                    Console.WriteLine($"[MouseHook]: Failed to unhook mouse. Error: {error}");
+                }
+                _hookId = IntPtr.Zero;
+            }
         }
 
         private IntPtr SetHook(LowLevelMouseProc hookProcDelegate)
         {
             using var curProcess = System.Diagnostics.Process.GetCurrentProcess();
             using var curModule = curProcess.MainModule;
-            if (curModule != null)
-                return SetWindowsHookEx(WH_MOUSE_LL, hookProcDelegate, GetModuleHandle(curModule.ModuleName), 0);
-            return IntPtr.Zero;
+            if (curModule == null)
+            {
+                Console.WriteLine("[MouseHook]: Failed to get current module");
+                return IntPtr.Zero;
+            }
+            
+            IntPtr moduleHandle = GetModuleHandle(curModule.ModuleName);
+            if (moduleHandle == IntPtr.Zero)
+            {
+                int error = Marshal.GetLastWin32Error();
+                Console.WriteLine($"[MouseHook]: Failed to get module handle. Error: {error}");
+                return IntPtr.Zero;
+            }
+            
+            return SetWindowsHookEx(WH_MOUSE_LL, hookProcDelegate, moduleHandle, 0);
         }
     }
 }

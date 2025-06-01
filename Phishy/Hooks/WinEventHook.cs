@@ -11,14 +11,14 @@ namespace Phishy.Hooks
 
         private delegate void WinEventProc(IntPtr hWinEventHook, uint eventType, IntPtr hwnd, long idObject, long idChild, uint dwEventThread, uint dwmsEventTime);
         private readonly WinEventProc _hookProcDelegate;
-        private static IntPtr _hookId = IntPtr.Zero;
+        private IntPtr _hookId = IntPtr.Zero;
 
         public event EventHandler<string>? OnCursorIconChange;
 
-        [DllImport("user32.dll")]
+        [DllImport("user32.dll", SetLastError = true)]
         private static extern IntPtr SetWinEventHook(uint eventMin, uint eventMax, IntPtr hmodWinEventProc, WinEventProc lpfnWinEventProc, uint idProcess, uint idThread, uint dwFlags);
 
-        [DllImport("user32.dll")]
+        [DllImport("user32.dll", SetLastError = true)]
         private static extern bool UnhookWinEvent(IntPtr hWinEventHook);
 
         public WinEventHook()
@@ -40,11 +40,24 @@ namespace Phishy.Hooks
         public void HookWinEvent(uint processId)
         {
             _hookId = SetHook(processId, _hookProcDelegate);
+            if (_hookId == IntPtr.Zero)
+            {
+                int error = Marshal.GetLastWin32Error();
+                throw new InvalidOperationException($"Failed to install WinEvent hook. Error: {error}");
+            }
         }
 
         public void UnHookWinEvent()
         {
-            UnhookWinEvent(_hookId);
+            if (_hookId != IntPtr.Zero)
+            {
+                if (!UnhookWinEvent(_hookId))
+                {
+                    int error = Marshal.GetLastWin32Error();
+                    Console.WriteLine($"[WinEventHook]: Failed to unhook WinEvent. Error: {error}");
+                }
+                _hookId = IntPtr.Zero;
+            }
         }
 
         private IntPtr SetHook(uint processId, WinEventProc hookProcDelegate)
