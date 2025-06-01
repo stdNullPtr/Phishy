@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.1.0](https://github.com/stdNullPtr/Phishy/compare/phishy-v1.0.0...phishy-v1.1.0) (2025-06-01)
+
+
+### Features
+
+* add auto-assignment of PRs to maintainer ([#11](https://github.com/stdNullPtr/Phishy/issues/11)) ([e8255d3](https://github.com/stdNullPtr/Phishy/commit/e8255d3570cfdaa8642a3de88ea7477fa2dd8e5c))
+* add interact key fishing mode support ([#12](https://github.com/stdNullPtr/Phishy/issues/12)) ([98ebc19](https://github.com/stdNullPtr/Phishy/commit/98ebc19d65066f84655db3d41cf8498408bf0f09))
+
+
+### Bug Fixes
+
+* correct license from MIT claim to actual AGPL-3.0 ([#9](https://github.com/stdNullPtr/Phishy/issues/9)) ([ee71dd5](https://github.com/stdNullPtr/Phishy/commit/ee71dd5c816a223547b9da6a774983a8c843f250))
+
 ## 1.0.0 (2025-06-01)
 
 
