@@ -9,7 +9,7 @@
       <img alt="Downloads" src="https://img.shields.io/github/downloads/stdNullPtr/Phishy/total?style=for-the-badge&logo=github">
     </a>
     <a href="https://github.com/stdNullPtr/Phishy/blob/master/LICENSE">
-      <img alt="License" src="https://img.shields.io/github/license/stdNullPtr/Phishy?style=for-the-badge">
+      <img alt="License" src="https://img.shields.io/badge/license-AGPL--3.0-blue?style=for-the-badge">
     </a>
   </p>
   
@@ -270,7 +270,16 @@ Please ensure your code follows the existing patterns and includes appropriate e
 
 ## 📜 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the **GNU Affero General Public License v3.0 (AGPL-3.0)** - see the [LICENSE](LICENSE) file for details.
+
+### What this means:
+- ✅ **Free to use, modify, and distribute**
+- ✅ **Commercial use is allowed**
+- ✅ **All derivatives MUST be open source**
+- ✅ **Network use requires source disclosure**
+- ⚠️ **Strong copyleft - changes must use AGPL-3.0**
+
+The AGPL ensures that all modifications and derivatives remain open source, even when used as a network service. If you modify this code and provide it as a service, you must share your source code.
 
 ## 🙏 Acknowledgments
 
