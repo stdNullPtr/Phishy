@@ -38,8 +38,8 @@ public sealed class Properties
     [YamlMember(Description = "Use interact key instead of mouse clicking for fishing (requires WoW expansion with interact feature, Default: false)")]
     public bool UseInteractKey { get; set; }
 
-    [YamlMember(Description = "Keyboard key binding for interact with target (required if UseInteractKey is true, Default: f)")]
-    public string? KeyboardKeyInteract { get; set; }
+    [YamlMember(Description = "Keyboard key binding for interact with target (Default: f)")]
+    public string KeyboardKeyInteract { get; set; }
 
     public Properties()
     {

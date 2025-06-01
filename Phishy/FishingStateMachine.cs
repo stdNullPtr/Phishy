@@ -126,7 +126,7 @@ public class FishingStateMachine : IFishingStateMachine
                 if (AppConfig.Props.UseInteractKey)
                 {
                     Console.WriteLine($"[FishingStateMachine]: Using interact key: {AppConfig.Props.KeyboardKeyInteract}");
-                    KeyboardUtils.SendKeyInput(AppConfig.Props.KeyboardKeyInteract!);
+                    KeyboardUtils.SendKeyInput(AppConfig.Props.KeyboardKeyInteract);
                 }
                 else
                 {
