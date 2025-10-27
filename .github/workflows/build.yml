@@ -48,7 +48,7 @@ jobs:
             -o artifacts/${{ matrix.runtime }}
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: phishy-${{ matrix.runtime }}
           path: artifacts/${{ matrix.runtime }}
